@@ -107,7 +107,12 @@ function gr () {
         else
             projectId=`git config --get gitlab.projectId`
             assignee=`git config --get gitlab.assignee`
-            gitlab addMergeRequest $projectId $user_branch $branch $assignee $msg
+            if [[ `git diff $user_branch  origin/$branch | grep diff`  != "" ]]; then
+                gitlab addMergeRequest $projectId $user_branch $branch $assignee $msg
+            else
+                echo "Your branch $user_branch is sync with $branch"
+            fi
+
         fi
     else
         echo "you are not in your own branch"
