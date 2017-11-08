@@ -265,3 +265,31 @@ function gdc() {
     fi
 }
 
+
+function gmergepr() {
+    if [ -z "$1" ]; then
+        echo "Usage: gmergepr user_branch"
+        return
+    else
+        git checkout $1 && gl && gdc && git merge - && git push && git checkout - && git push
+    fi
+}
+
+function gci() {
+    git add .
+    git add -u
+    git commit -m "$*"
+}
+
+alias grst='git reset . && git checkout . && git clean -df .'
+alias gf='git diff'
+alias gg='git log | less'
+alias ga='git add . && git add -u'
+alias gtci='git add . && git commit -m "Minor fixes"'
+alias gs='git status'
+alias sg='git status'
+alias gp='git pull'
+alias gu='git push'
+alias gpu='git pull && git push'
+alias ghr='gh && gr'
+
