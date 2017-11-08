@@ -107,6 +107,22 @@ function gr () {
         else
             projectId=`git config --get gitlab.projectId`
             assignee=`git config --get gitlab.assignee`
+            url=`git config --get gitlab.assignee`
+            token=`git config --get gitlab.assignee`
+
+            if [[ $url != `gitlab url` ]]
+            then
+                echo 'Setup gitlab url $url'
+                gitlab url $url
+            fi
+
+            if [[ $token != `gitlab token` ]]
+            then
+                echo 'Setup gitlab token $token'
+                gitlab token $token
+            fi
+
+
             if [[ `git diff $user_branch  origin/$branch | grep diff`  != "" ]]; then
                 gitlab addMergeRequest $projectId $user_branch $branch $assignee $msg
             else
