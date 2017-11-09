@@ -1,4 +1,9 @@
 #!/bin/sh
 function update_tools() {
-    cd $HOME && git clone git@github.com:foobra/SimpleUtilTools.git && cd SimpleUtilTools && git pull
+    cd $HOME
+    if [[ ! -d "SimpleUtilTools" ]];
+    then
+        git clone git@github.com:foobra/SimpleUtilTools.git
+    fi
+    cd SimpleUtilTools && git pull
 }
