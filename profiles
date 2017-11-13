@@ -1,15 +1,5 @@
 #!/bin/sh
 
 
-if [ "$(uname)" == "Darwin" ]; then
-    HOME_DIR=$HOME
-elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
-    HOME_DIR=$HOME
-elif [ "$(expr substr $(uname -s) 1 10)" == "MINGW32_NT" ]; then
-    HOME_DIR=%HOME%
-elif [ "$(expr substr $(uname -s) 1 10)" == "MINGW64_NT" ]; then
-    HOME_DIR=%HOME%
-fi
-
-source $HOME_DIR/SimpleUtilTools/git/git-utils
-source $HOME_DIR/SimpleUtilTools/update/update-utils
+source $HOME/SimpleUtilTools/git/git-utils
+source $HOME/SimpleUtilTools/update/update-utils
