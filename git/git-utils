@@ -107,8 +107,8 @@ function gr () {
         else
             projectId=`git config --get gitlab.projectId`
             assignee=`git config --get gitlab.assignee`
-            url=`git config --get gitlab.assignee`
-            token=`git config --get gitlab.assignee`
+            url=`git config --get gitlab.url`
+            token=`git config --get gitlab.token`
 
             if [[ $url != `gitlab url` ]]
             then
