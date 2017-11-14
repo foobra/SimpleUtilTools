@@ -267,6 +267,19 @@ function gdc() {
 
 
 function gmergepr() {
+    now_pwd=`pwd`
+    while [[ ! -d ".git" ]];do
+        cd ..
+        if [[ `pwd` == '/' ]]; then
+            echo 'Here is Root, Damn! Let us go back, biu~~'
+            cd ${now_pwd}
+            return
+        fi
+    done;
+    if [[ ! -z $(git status -uno --porcelain) ]];then
+        echo "Please clean up your git status"
+        return
+    fi
     if [ -z "$1" ]; then
         echo "Usage: gmergepr user_branch"
         return
