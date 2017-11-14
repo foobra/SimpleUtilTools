@@ -1,7 +1,8 @@
 1. gitlab install
     1. windows https://nodejs.org/dist/v8.9.1/node-v8.9.1-x86.msi)
     2. mac https://nodejs.org/dist/v8.9.1/node-v8.9.1.pkg
-    3. npm install cli-gitlab -g
+    3. windows 确保安装git (https://git-scm.com/download/win)
+    4. npm install cli-gitlab -g
 2. git config
     1. 先进入项目
     2. username
