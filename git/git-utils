@@ -266,6 +266,35 @@ function gdc() {
 }
 
 
+function gbeginpr() {
+    now_pwd=`pwd`
+    while [[ ! -d ".git" ]];do
+        cd ..
+        if [[ `pwd` == '/' ]]; then
+            echo 'Here is Root, Damn! Let us go back, biu~~'
+            cd ${now_pwd}
+            return
+        fi
+    done;
+    if [[ ! -z $(git status -uno --porcelain) ]];then
+        echo "Please clean up your git status"
+        return
+    fi
+    if [ -z "$1" ]; then
+        echo "Usage: gbeginpr user_branch"
+        return
+    else
+        git checkout $1
+        gl
+        git push origin $1
+        if [[ ! -z $(git status -uno --porcelain) ]];then
+            echo "the $1 has merge conflict, please fix it."
+        return
+    fi
+    fi
+}
+
+
 function gmergepr() {
     now_pwd=`pwd`
     while [[ ! -d ".git" ]];do
@@ -284,7 +313,9 @@ function gmergepr() {
         echo "Usage: gmergepr user_branch"
         return
     else
-        git checkout $1 && gl && gdc && git merge - && git push && git checkout - && git push
+        current_head=`git branch | grep -e "^*" | cut -d' ' -f 2`
+        current_head2="${current_head}"
+        git checkout $1 && gl && gdc && git merge - && git push && git checkout - && git push && git checkout $current_head2
     fi
 }
 
