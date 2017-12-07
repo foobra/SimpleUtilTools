@@ -15,10 +15,10 @@
         5. git config gitlab.url http://10.148.68.13 上面查出来的url
         6. git config gitlab.token xxxxx  上面查出来的 token
     4. projectid assignee
-        1. gitlab me | grep \"id\" 查看自己的id
-        2. git remote get-url origin | cut -d "/" -f2 | cut -d "." -f1 | xargs  gitlab searchProject | grep \"id\" -m 1 查看自己项目的projectId
-        3. git config gitlab.projectId xx (上面查出来的projectId)
-        4. git config gitlab.assignee 471 (上面查出来的自己的id)
+        1. 设置自己的assignee
+            gitlab me | grep \"id\" | cut -d ":" -f2 | cut -d "," -f1 | cut -b 2-  | xargs git config gitlab.assignee
+        2. 设置自己的 projectId
+            git remote get-url origin | cut -d "/" -f2 | cut -d "." -f1 | xargs  gitlab searchProject | grep \"id\" -m 1 | cut -d ":" -f2 | cut -d "," -f1 | cut -b 2- | xargs git config gitlab.projectId
 3. update config (只执行一次 windows)
         1. cd $HOME && git clone https://github.com/foobra/SimpleUtilTools.git && cd SimpleUtilTools && git pull
         2. echo 'source $HOME/SimpleUtilTools/profiles' >> ~/.zshrc (.zshrc 需要注释掉 plugins=(git))
