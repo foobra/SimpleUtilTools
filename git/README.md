@@ -28,3 +28,5 @@
     2. 拉取代码   gl
     3. 推送代码 gh
     4. 提交代码请求 gr
+5. 代码审核插件
+    1. idea 搜索 gitlab projects
