@@ -16,7 +16,7 @@
         6. git config gitlab.token xxxxx  上面查出来的 token
     4. projectid assignee
         1. assignee的设置 终端执行 gitlab me | grep \\"id\\" | cut -d ":" -f2 | cut -d "," -f1 | cut -b 2-  | xargs git config gitlab.assignee
-        2. projectId的设置 终端执行 git remote get-url origin | cut -d "/" -f2 | cut -d "." -f1 | xargs  gitlab searchProject | grep \\"id\\" -m 1 | cut -d ":" -f2 | cut -d "," -f1 | cut -b 2- | xargs git config gitlab.projectId
+        2. projectId的设置 终端执行 cat .git/config | grep url | awk '{print $3}' | grep . -m 1 | awk -F"[/]" '{print $2}' | awk -F"[.]" '{print $1}' | xargs gitlab searchProject | grep \\"id\\" -m 1 | cut -d ":" -f2 | cut -d "," -f1 | cut -b 2- | xargs git config gitlab.projectId
 3. update config
     1. cd $HOME && git clone https://github.com/foobra/SimpleUtilTools.git && cd SimpleUtilTools && git pull
     2. echo 'source $HOME/SimpleUtilTools/profiles' >> ~/.bashrc
