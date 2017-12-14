@@ -20,9 +20,9 @@
         6. 终端执行 git config gitlab.token xxxxx  上面查出来的 token
     3. projectid assignee
         1. assignee的设置
-          1. 终端执行 gitlab me | grep \\"id\\" | cut -d ":" -f2 | cut -d "," -f1 | cut -b 2-  | xargs git config gitlab.assignee
+            1. 终端执行 gitlab me | grep \\"id\\" | cut -d ":" -f2 | cut -d "," -f1 | cut -b 2-  | xargs git config gitlab.assignee
         2. projectId的设置
-          1. 终端执行 cat .git/config | grep url | awk '{print $3}' | grep . -m 1 | awk -F"[/]" '{print $2}' | awk -F"[.]" '{print $1}' | xargs gitlab searchProject | grep \\"id\\" -m 1 | cut -d ":" -f2 | cut -d "," -f1 | cut -b 2- | xargs git config gitlab.projectId
+            1. 终端执行 cat .git/config | grep url | awk '{print $3}' | grep . -m 1 | awk -F"[/]" '{print $2}' | awk -F"[.]" '{print $1}' | xargs gitlab searchProject | grep \\"id\\" -m 1 | cut -d ":" -f2 | cut -d "," -f1 | cut -b 2- | xargs git config gitlab.projectId
 4. daily use
     0. 上述操作执行完成之后, 关闭终端应用, 重新打开终端应用
     1. 创建新分支 gnb dev2.11
