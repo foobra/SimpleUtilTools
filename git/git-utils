@@ -305,17 +305,25 @@ function gmergepr() {
             return
         fi
     done;
-    if [[ ! -z $(git status -uno --porcelain) ]];then
-        echo "Please clean up your git status"
-        return
-    fi
+
+
     if [ -z "$1" ]; then
         echo "Usage: gmergepr user_branch"
         return
     else
-        current_head=`git branch | grep -e "^*" | cut -d' ' -f 2`
-        current_head2="${current_head}"
-        git checkout $1 && gl && gdc && git merge - && git push && git checkout - && git push && git checkout $current_head2
+        if [[ ! -z $(git status -uno --porcelain) ]];then
+            git add -u .
+            git stash
+            current_head=`git branch | grep -e "^*" | cut -d' ' -f 2`
+            current_head2="${current_head}"
+            git checkout $1 && gl && gdc && git merge - && git push && git checkout - && git push && git checkout $current_head2
+            git stash apply
+            return
+        else
+            current_head=`git branch | grep -e "^*" | cut -d' ' -f 2`
+            current_head2="${current_head}"
+            git checkout $1 && gl && gdc && git merge - && git push && git checkout - && git push && git checkout $current_head2
+        fi
     fi
 }
 

@@ -25,9 +25,11 @@
             1. 终端执行 cat .git/config | grep url | awk '{print $3}' | grep . -m 1 | awk -F"[/]" '{print $2}' | awk -F"[.]" '{print $1}' | xargs gitlab searchProject | grep \\"id\\" -m 1 | cut -d ":" -f2 | cut -d "," -f1 | cut -b 2- | xargs git config gitlab.projectId
 4. daily use
     0. 上述操作执行完成之后, 关闭终端应用, 重新打开终端应用
-    1. 创建新分支 gnb dev2.11
+    1. 创建新分支 gnb dev2.11(这个是主分支名字, 大家根据自己的分支名修改)
     2. 拉取代码  gl
     3. 推送代码 gh
     4. 提交代码请求 gr
+    5. 公司的gitlab偶尔出问题, 无法合并pull-request, 所以可以使用下面的命令手动合并分支
+    6. gmergepr gs_dev2.11 (表示把 gs_dev2.11 合并到分支 dev2.11, 请在合并前审核代码,gitlab网页审核, 或者在IDE里面审核, 然后在手动执行这个命令合并分支, 等公司gitlab彻底修好了之后, 就可以不用这个命令了)
 5. 代码审核插件
     1. idea 搜索 gitlab projects
