@@ -3,7 +3,6 @@
     2. mac https://nodejs.org/dist/v8.9.1/node-v8.9.1.pkg
     3. npm install cli-gitlab -g
     4. 终端执行 git config --global user.name gs(这里换成自己的名字拼音, 或者拼音缩写)
-    5. 终端执行 git config user.name gs(这里换成自己的名字拼音, 或者拼音缩写)
 2. git config (每个项目都要执行一次)
     0. 终端执行的意思是, mac电脑打开终端应用, windows电脑打开 Git Bash.
     1. 在终端中, 先进入项目目录
@@ -14,6 +13,7 @@
         4. 终端执行 gitlab token xxxx
         5. 终端执行 git config gitlab.url http://10.148.68.13 上面查出来的url
         6. 终端执行 git config gitlab.token xxxxx  上面查出来的 token
+        7. 终端执行 git config user.name gs(这里换成自己的名字拼音, 或者拼音缩写)
     3. projectid assignee
         1. assignee的设置
             1. 终端执行 gitlab me | grep \\"id\\" | cut -d ":" -f2 | cut -d "," -f1 | cut -b 2-  | xargs git config gitlab.assignee
