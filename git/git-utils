@@ -12,7 +12,7 @@ function gl () {
         fi
     done
     head=`cat .git/HEAD`
-    current_head=${head##*/}
+    current_head=`echo $head | cut -b 17-`
     user=${current_head%%_*}
     if [[ $current_head = *_* ]]
     then
@@ -46,7 +46,7 @@ function gh () {
         fi
     done
     head=`cat .git/HEAD`
-    current_head=${head##*/}
+    current_head=`echo $head | cut -b 17-`
     user=${current_head%%_*}
     if [[ $current_head = *_* ]]
     then
@@ -85,7 +85,7 @@ function gr () {
         fi
     done
     head=`cat .git/HEAD`
-    current_head=${head##*/}
+    current_head=`echo $head | cut -b 17-`
     origin=`git ls-remote --get-url origin`
     user=${current_head%%_*}
     if [[ $current_head = *_* ]]
@@ -160,7 +160,7 @@ function gnb () {
     fi
     done
 
-    head=`cat .git/HEAD`
+
     user=`git config --get user.name`
     user_branch="${user}_$default_branch"
 

@@ -1,10 +1,11 @@
+终端执行的意思是, mac电脑打开终端应用, windows电脑则是在资源管理器中, 右键, 选择 Git Bash.
+
 1. gitlab install (每个用户执行一次)
     1. windows https://nodejs.org/dist/v8.9.1/node-v8.9.1-x86.msi)
     2. mac https://nodejs.org/dist/v8.9.1/node-v8.9.1.pkg
     3. npm install cli-gitlab -g
     4. 终端执行 git config --global user.name gs(这里换成自己的名字拼音, 或者拼音缩写)
 2. git config (每个项目都要执行一次)
-    0. 终端执行的意思是, mac电脑打开终端应用, windows电脑打开 Git Bash.
     1. 在终端中, 先进入项目目录
     2. 设置url token
         1. 查找到自己的gitlab url 后面备用 http://10.148.68.13
@@ -18,7 +19,7 @@
         1. assignee的设置
             1. 终端执行 gitlab me | grep \\"id\\" | cut -d ":" -f2 | cut -d "," -f1 | cut -b 2-  | xargs git config gitlab.assignee
         2. projectId的设置
-            1. 终端执行 cat .git/config | grep url | awk '{print $3}' | grep . -m 1 | awk -F"[/]" '{print $2}' | awk -F"[.]" '{print $1}' | xargs gitlab searchProject | grep \\"id\\" -m 1 | cut -d ":" -f2 | cut -d "," -f1 | cut -b 2- | xargs git config gitlab.projectId
+            1. 终端执行 cat .git/config | grep url | awk '{print $3}' | grep . -m 1 | rev | cut -b 5-  | awk -F"[/]" '{print $1}' | rev | xargs gitlab searchProject | grep \\"id\\" -m 1 | cut -d ":" -f2 | cut -d "," -f1 | cut -b 2- | xargs git config gitlab.projectId
 3. update config (每个用户只需要执行一次)
     1. cd $HOME && git clone https://github.com/foobra/SimpleUtilTools.git && cd SimpleUtilTools && git pull
     2. echo 'source $HOME/SimpleUtilTools/profiles' >> ~/.bash_profile
