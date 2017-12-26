@@ -218,7 +218,8 @@ function gcd () {
     then
         echo "you have already switched to your own branch"
     else
-        branch=${head##*/}
+        branch=`echo $head | cut -b 17-`
+
         if [[ -z "$1" ]]
         then
             user_branch="${user}_${branch}"
@@ -241,7 +242,8 @@ function gdc() {
     done;
     head=`cat .git/HEAD`
 
-    current_head=${head##*/}
+    current_head=`echo $head | cut -b 17-`
+
 
     user=${current_head%%_*}
 
