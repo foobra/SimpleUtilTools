@@ -98,12 +98,12 @@ function gr () {
         else
             user_branch="${user}_${branch}"
         fi
-        msg="${user_branch} pull-request"
+        msg="${user_branch}_pull-request"
         desc=`git log origin/$branch..$user_branch --pretty=oneline --abbrev-commit --no-merges`
         result=$(echo $origin | grep "github.com")
         if [[ "$result" != "" ]]
         then
-            hub pull-request -o -m $msg -b $branch -h $user_branch
+            hub pull-request -o -m "msg -b $branch -h $user_branch
         else
             projectId=`git config --get gitlab.projectId`
             assignee=`git config --get gitlab.assignee`
