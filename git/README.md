@@ -19,7 +19,7 @@
         1. assignee的设置
             1. 终端执行 gitlab me | grep \\"id\\" | cut -d ":" -f2 | cut -d "," -f1 | cut -b 2-  | xargs git config gitlab.assignee
         2. projectId的设置
-            1. 终端执行 cat .git/config | grep url | awk '{print $3}' | grep . -m 1 | rev | cut -b 5-  | awk -F"[/]" '{print $1}' | rev | xargs gitlab searchProject | grep \\"id\\" -m 1 | cut -d ":" -f2 | cut -d "," -f1 | cut -b 2- | xargs git config gitlab.projectId
+            1. 终端执行 cat .git/config | grep url | awk '{print $3}' | grep . -m 1  | awk '{for (i = length($0); i > 0; i--) {printf("%s", substr($0, i, 1));} print "";}' | cut -b 5-  | awk -F"[/]" '{print $1}' | awk '{for (i = length($0); i > 0; i--) {printf("%s", substr($0, i, 1));} print "";}' | xargs gitlab searchProject | grep \\"id\\" -m 1 | cut -d ":" -f2 | cut -d "," -f1 | cut -b 2- | xargs git config gitlab.projectId
 3. update config (每个用户只需要执行一次)
     1. cd $HOME && git clone https://github.com/foobra/SimpleUtilTools.git && cd SimpleUtilTools && git pull
     2. echo 'source $HOME/SimpleUtilTools/profiles' >> ~/.bash_profile
