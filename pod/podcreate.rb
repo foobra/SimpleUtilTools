@@ -9,7 +9,7 @@ system 'touch', "#{pod_name}/#{pod_name}.podspec"
 
 podspec_text =  <<-EOF
 Pod::Spec.new do |s|
-    s.name         = #{pod_name}
+    s.name         = "#{pod_name}"
     s.version      = "1.0.0"
     s.homepage     = "https://www.github.com"
     s.author       = "TSG iOS"
@@ -47,7 +47,13 @@ Pod::Spec.new do |s|
 
     s.script_phase  =
     [
-        { :name => 'R Objc', :script => "$PODS_ROOT/MGR.objc/Robjc -p \\\"$PODS_TARGET_SRCROOT\\\" --skip-storyboards --skip-strings --skip-themes --skip-segues \#{custom_isDynamicFramework} \#{custom_isResourceBundle} --resource-bundle \#{s.name}", :execution_position => :before_compile },
+        { :name => 'R Objc', :execution_position => :before_compile, :script => <<-EOS
+            if [ -d $PODS_TARGET_SRCROOT/Assets/*.xcassets ];then
+              echo "Generate R File"
+              $PODS_ROOT/MGR.objc/Robjc -p \\\"$PODS_TARGET_SRCROOT\\\" --skip-storyboards --skip-strings --skip-themes --skip-segues \#{custom_isDynamicFramework} \#{custom_isResourceBundle} --resource-bundle \#{s.name}
+            fi
+          EOS
+        },
         { :name => 'Generate Macro', :script => "echo \\\"\#{custom_pch_str}\\\" >> $PODS_TARGET_SRCROOT/R\#{s.name}.h", :execution_position => :before_compile },
         { :name => 'Clang-format', :execution_position => :before_compile, :script => <<-EOS
             clang_format=$PODS_ROOT/clang-format-bin/clang-format
