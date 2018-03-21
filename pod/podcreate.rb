@@ -6,6 +6,8 @@ system "cd #{pwd}"
 system 'mkdir', '-p', "#{pod_name}/Classes"
 system 'mkdir', '-p', "#{pod_name}/Assets"
 system 'touch', "#{pod_name}/#{pod_name}.podspec"
+system 'touch', "#{pod_name}/R#{pod_name}.h"
+system 'touch', "#{pod_name}/R#{pod_name}.m"
 
 podspec_text =  <<-EOF
 Pod::Spec.new do |s|
@@ -22,6 +24,7 @@ Pod::Spec.new do |s|
     s.cocoapods_version = '>= 1.4.0'
     s.swift_version = '4.0'
     s.source_files = 'Classes/**/*.{h,m,mm,cpp,c,hpp,cc,swift}', 'R*.h', 'R*.m'
+    s.exclude_files = 'Classes/**/*-Bridging-Header.h'
     # s.resources = "Assets/**/*.{bundle,json,xcassets,gif}"
     s.resource_bundles = { s.name => ['Assets/**/*.*', 'Classes/**/*.{xib,storyboard}'] }
 
@@ -54,7 +57,14 @@ Pod::Spec.new do |s|
             fi
           EOS
         },
-        { :name => 'Generate Macro', :script => "echo \\\"\#{custom_pch_str}\\\" >> $PODS_TARGET_SRCROOT/R\#{s.name}.h", :execution_position => :before_compile },
+        { :name => 'Generate Macro', :execution_position => :before_compile, :script => <<-EOS
+            result=`cat ${PODS_TARGET_SRCROOT}/R\#{s.name}.h | grep '#define'`
+            if [ -z "$result" ]; then
+                echo 'Write Macro'
+                echo '\#{custom_pch_str}' >> $PODS_TARGET_SRCROOT/R\#{s.name}.h
+            fi
+            EOS
+        },
         { :name => 'Clang-format', :execution_position => :before_compile, :script => <<-EOS
             clang_format=$PODS_ROOT/clang-format-bin/clang-format
             run_clangformat() {
