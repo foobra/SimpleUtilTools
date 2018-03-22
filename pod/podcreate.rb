@@ -6,6 +6,8 @@ system "cd #{pwd}"
 system 'mkdir', '-p', "#{pod_name}/Classes"
 system 'mkdir', '-p', "#{pod_name}/Assets"
 system 'touch', "#{pod_name}/#{pod_name}.podspec"
+system 'touch', "#{pod_name}/Classes/.gitkeep"
+system 'touch', "#{pod_name}/Assets/.gitkeep"
 system 'touch', "#{pod_name}/R#{pod_name}.h"
 system 'touch', "#{pod_name}/R#{pod_name}.m"
 
