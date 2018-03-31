@@ -25,7 +25,7 @@ Pod::Spec.new do |s|
     s.static_framework = true
     s.cocoapods_version = '>= 1.4.0'
     s.swift_version = '4.0'
-    s.source_files = 'Classes/**/*.{h,m,mm,cpp,c,hpp,cc,swift}', 'R*.h', 'R*.m'
+    s.source_files = 'Classes/**/*.{h,m,mm,cpp,c,hpp,cc,swift}', 'R\#{s.name}.h', 'R\#{s.name}.m'
     s.exclude_files = 'Classes/**/*-Bridging-Header.h'
     # s.resources = "Assets/**/*.{bundle,json,xcassets,gif}"
     s.resource_bundles = { s.name => ['Assets/**/*.*', 'Classes/**/*.{xib,storyboard}'] }
