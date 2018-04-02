@@ -24,7 +24,7 @@ Pod::Spec.new do |s|
     s.requires_arc = true
     s.static_framework = true
     s.cocoapods_version = '>= 1.4.0'
-    s.swift_version = '4.0'
+    s.swift_version = '4.1'
     s.source_files = 'Classes/**/*.{h,m,mm,cpp,c,hpp,cc,swift}', "R\#{s.name}.h", "R\#{s.name}.m"
     s.exclude_files = 'Classes/**/*-Bridging-Header.h'
     # s.resources = "Assets/**/*.{bundle,json,xcassets,gif}"
@@ -38,15 +38,23 @@ Pod::Spec.new do |s|
     custom_pch_str = ""
     if !s.static_framework
         if isResourceBundle
-            custom_pch_str = "#define \#{s.name}Bundle [NSBundle bundleWithIdentifier:@\\\"org.cocoapods.\#{s.name}\\\"]"
-        else
-            custom_pch_str = "#define \#{s.name}Bundle [NSBundle bundleWithIdentifier:@\\\"org.cocoapods.\#{s.name}\\\"]"
+            custom_pch_str = <<-EOS
+static inline NSBundle* \#{s.name}Bundle() {
+    NSBundle *b1 = [NSBundle bundleWithIdentifier:@\\\"org.cocoapods.\#{s.name}\\\"];
+    NSBundle *b2 = [NSBundle bundleWithPath:[b1 pathForResource:@\\\"\#{s.name}\\\" ofType:@\\\"bundle\\\"]];
+    return b2 != nil ? b2 : b1;
+}
+               EOS
         end
     else
         if isResourceBundle
-            custom_pch_str = "#define \#{s.name}Bundle [NSBundle bundleWithPath:[[NSBundle mainBundle] pathForResource:@\\\"\#{s.name}\\\" ofType:@\\\"bundle\\\"]]"
-        else
-            custom_pch_str = "#define \#{s.name}Bundle [NSBundle mainBundle]"
+            custom_pch_str = <<-EOS
+static inline NSBundle* \#{s.name}Bundle() {
+    NSBundle *b1 = [NSBundle mainBundle];
+    NSBundle *b2 = [NSBundle bundleWithPath:[b1 pathForResource:@\\\"\#{s.name}\\\" ofType:@\\\"bundle\\\"]];
+    return b2 != nil ? b2 : b1;
+}
+EOS
         end
     end
 
@@ -59,10 +67,10 @@ Pod::Spec.new do |s|
             fi
           EOS
         },
-        { :name => 'Generate Macro', :execution_position => :before_compile, :script => <<-EOS
-            result=`cat ${PODS_TARGET_SRCROOT}/R\#{s.name}.h | grep '#define'`
+        { :name => 'Generate Bundle Function', :execution_position => :before_compile, :script => <<-EOS
+            result=`cat ${PODS_TARGET_SRCROOT}/R\#{s.name}.h | grep 'static inline NSBundle'`
             if [ -z "$result" ]; then
-                echo 'Write Macro'
+                echo 'Write Bundle Function'
                 echo '\#{custom_pch_str}' >> $PODS_TARGET_SRCROOT/R\#{s.name}.h
             fi
             EOS
@@ -82,17 +90,37 @@ Pod::Spec.new do |s|
                 fi
             }
 
-            #git ls-files --exclude-from=.gitignore | grep "MiGuIMP/" | while read filename; do run_clangformat "${filename}"; done
             cd $SRCROOT/../
             touch .gitignore
-            git ls-files -om --exclude-from=.gitignore | grep "MGBaseUI/Classes/" | while read filename; do run_clangformat "${filename}"; done
-            git diff --cached --name-only | grep "MGBaseUI/Classes/" | while read filename; do run_clangformat "${filename}"; done
+            git ls-files -om --exclude-from=.gitignore | grep "\#{s.name}/Classes/" | while read filename; do run_clangformat "${filename}"; done
+            git diff --cached --name-only | grep "\#{s.name}/Classes/" | while read filename; do run_clangformat "${filename}"; done
+                      EOS
+        },
+        { :name => 'SwiftFormat', :execution_position => :before_compile, :script => <<-EOS
+            SWIFT_FORMAT="${PODS_ROOT}/SwiftFormat/CommandLineTool/swiftformat"
+            run_swiftformat() {
+                local filename="${1}"
+                cd $SRCROOT/../
+                if [ ! -f "$filename" ]; then
+                return
+                fi
+
+    if [[ "${filename##*.}" == "swift" ]]; then
+    ${SWIFT_FORMAT} --disable 'redundantSelf' "${filename}" --decimalgrouping ignore --binarygrouping ignore --decimalgrouping ignore --octalgrouping ignore --indent 2 --removelines --duplicateImports
+                fi
+            }
+
+            cd $SRCROOT/../
+            touch .gitignore
+            git ls-files -om --exclude-from=.gitignore | grep "\#{s.name}/Classes/" | while read filename; do run_swiftformat "${filename}"; done
+            git diff --cached --name-only | grep "\#{s.name}/Classes/" | while read filename; do run_swiftformat "${filename}"; done
                       EOS
         },
     ]
 
     s.dependency "MGR.objc"
     s.dependency "clang-format-bin"
+    s.dependency "SwiftFormat/CLI"
 end
 EOF
 
