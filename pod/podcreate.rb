@@ -35,24 +35,39 @@ Pod::Spec.new do |s|
     isResourceBundle = true
     custom_isResourceBundle = isResourceBundle ? "--is-resource-bundle" : ""
 
-    custom_pch_str = ""
+    custom_bundle_header = ""
+    custom_bundle_imp = ""
     if !s.static_framework
         if isResourceBundle
-            custom_pch_str = <<-EOS
-static inline NSBundle* \#{s.name}Bundle() {
-    NSBundle *b1 = [NSBundle bundleWithIdentifier:@\\\"org.cocoapods.\#{s.name}\\\"];
-    NSBundle *b2 = [NSBundle bundleWithPath:[b1 pathForResource:@\\\"\#{s.name}\\\" ofType:@\\\"bundle\\\"]];
-    return b2 != nil ? b2 : b1;
-}
+            custom_bundle_header = <<-EOS
+NSBundle* \#{s.name}Bundle();
                EOS
+            custom_bundle_imp = <<-EOS
+static NSBundle *_\#{s.name}Bundle = nil;
+NSBundle* \#{s.name}Bundle() {
+    if (!_\#{s.name}Bundle) {
+        NSBundle *b1 = [NSBundle bundleWithIdentifier:@\\\"org.cocoapods.\#{s.name}\\\"];
+        NSBundle *b2 = [NSBundle bundleWithPath:[b1 pathForResource:@\\\"\#{s.name}\\\" ofType:@\\\"bundle\\\"]];
+        _\#{s.name}Bundle = b2 != nil ? b2 : b1;
+    }
+    return _\#{s.name}Bundle;
+}
+                              EOS
         end
     else
         if isResourceBundle
-            custom_pch_str = <<-EOS
-static inline NSBundle* \#{s.name}Bundle() {
-    NSBundle *b1 = [NSBundle mainBundle];
-    NSBundle *b2 = [NSBundle bundleWithPath:[b1 pathForResource:@\\\"\#{s.name}\\\" ofType:@\\\"bundle\\\"]];
-    return b2 != nil ? b2 : b1;
+            custom_bundle_header = <<-EOS
+NSBundle* \#{s.name}Bundle();
+EOS
+custom_bundle_imp = <<-EOS
+static NSBundle *_\#{s.name}Bundle = nil;
+NSBundle* \#{s.name}Bundle() {
+    if (!_\#{s.name}Bundle) {
+        NSBundle *b1 = [NSBundle mainBundle];
+        NSBundle *b2 = [NSBundle bundleWithPath:[b1 pathForResource:@\\\"\#{s.name}\\\" ofType:@\\\"bundle\\\"]];
+        _\#{s.name}Bundle = b2 != nil ? b2 : b1;
+    }
+    return _\#{s.name}Bundle;
 }
 EOS
         end
@@ -68,10 +83,11 @@ EOS
           EOS
         },
         { :name => 'Generate Bundle Function', :execution_position => :before_compile, :script => <<-EOS
-            result=`cat ${PODS_TARGET_SRCROOT}/R\#{s.name}.h | grep 'static inline NSBundle'`
+            result=`cat ${PODS_TARGET_SRCROOT}/R\#{s.name}.h | grep '\#{s.name}Bundle'`
             if [ -z "$result" ]; then
                 echo 'Write Bundle Function'
-                echo '\#{custom_pch_str}' >> $PODS_TARGET_SRCROOT/R\#{s.name}.h
+                echo '\#{custom_bundle_header}' >> $PODS_TARGET_SRCROOT/R\#{s.name}.h
+                echo '\#{custom_bundle_imp}' >> $PODS_TARGET_SRCROOT/R\#{s.name}.m
             fi
             EOS
         },
@@ -106,7 +122,7 @@ EOS
                 fi
 
     if [[ "${filename##*.}" == "swift" ]]; then
-    ${SWIFT_FORMAT} --disable 'redundantSelf' "${filename}" --decimalgrouping ignore --binarygrouping ignore --decimalgrouping ignore --octalgrouping ignore --indent 2 --removelines --duplicateImports
+    ${SWIFT_FORMAT} --disable 'redundantSelf' "${filename}" --decimalgrouping ignore --binarygrouping ignore --decimalgrouping ignore --octalgrouping ignore --indent 2
                 fi
             }
 
@@ -116,11 +132,37 @@ EOS
             git diff --cached --name-only | grep "\#{s.name}/Classes/" | while read filename; do run_swiftformat "${filename}"; done
                       EOS
         },
+        { :name => 'SwiftLint', :execution_position => :before_compile, :script => <<-EOS
+SWIFT_LINT="${PODS_ROOT}/SwiftLint/swiftlint"
+run_swiftlint() {
+    local filename="${1}"
+    echo $filename
+    cd $SRCROOT/../
+    if [ ! -f "$filename" ]; then
+    return
+    fi
+
+    if [[ "${filename##*.}" == "swift" ]]; then
+    ${SWIFT_LINT} autocorrect --path "${filename}"
+    ${SWIFT_LINT} lint --path "${filename}"
+    fi
+}
+
+
+cd $SRCROOT/../
+touch .gitignore
+git ls-files -om --exclude-from=.gitignore | grep "\#{s.name}/Classes/" | while read filename; do run_swiftlint "${filename}"; done
+git diff --cached --name-only | grep "\#{s.name}/Classes/" | while read filename; do run_swiftlint "${filename}"; done
+                      EOS
+        },
     ]
 
     s.dependency "MGR.objc"
     s.dependency "clang-format-bin"
     s.dependency "SwiftFormat/CLI"
+    s.dependency "SwiftLint"
+
+    # Your custom dependencies
 end
 EOF
 
