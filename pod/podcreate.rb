@@ -5,6 +5,8 @@ pod_name = ARGV[1]
 system "cd #{pwd}"
 system 'mkdir', '-p', "#{pod_name}/Classes"
 system 'mkdir', '-p', "#{pod_name}/Assets"
+system 'mkdir', '-p', "#{pod_name}/Assets/Assets.xcassets"
+system 'touch', "#{pod_name}/Assets/Assets.xcassets/Contents.json"
 system 'touch', "#{pod_name}/#{pod_name}.podspec"
 system 'touch', "#{pod_name}/Classes/.gitkeep"
 system 'touch', "#{pod_name}/Assets/.gitkeep"
@@ -166,7 +168,17 @@ git diff --cached --name-only | grep "\#{s.name}/Classes/" | while read filename
 end
 EOF
 
+assets_json = <<-EOF
+{
+    "info" : {
+      "version" : 1,
+      "author" : "xcode"
+    }
+}
+EOF
+
 File.write("#{pod_name}/#{pod_name}.podspec", podspec_text)
+File.write("#{pod_name}/Assets/Assets.xcassets/Contents.json", assets_json)
 
 
 
