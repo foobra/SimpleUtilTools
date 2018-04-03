@@ -40,11 +40,11 @@ Pod::Spec.new do |s|
     if !s.static_framework
         if isResourceBundle
             custom_bundle_header = <<-EOS
-NSBundle* \#{s.name}Bundle();
+NSBundle* \#{s.name}Bundle(void);
                EOS
             custom_bundle_imp = <<-EOS
 static NSBundle *_\#{s.name}Bundle = nil;
-NSBundle* \#{s.name}Bundle() {
+NSBundle* \#{s.name}Bundle(void) {
     if (!_\#{s.name}Bundle) {
         NSBundle *b1 = [NSBundle bundleWithIdentifier:@\\\"org.cocoapods.\#{s.name}\\\"];
         NSBundle *b2 = [NSBundle bundleWithPath:[b1 pathForResource:@\\\"\#{s.name}\\\" ofType:@\\\"bundle\\\"]];
