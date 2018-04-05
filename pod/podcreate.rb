@@ -22,6 +22,7 @@ Pod::Spec.new do |s|
     s.summary      = s.name
     s.source       = { :path => '.' }
     s.platform     = :ios, '9.0'
+    s.ios.deployment_target = '9.0'
     s.framework    = "Foundation", "UIKit"
     s.requires_arc = true
     s.static_framework = true
