@@ -1,5 +1,6 @@
 #!/bin/sh
 function gl () {
+    kill $(ps aux | grep 'Xcode' | awk '{print $2}')
     now_pwd=`pwd`
     while [[ ! -d ".git" ]]
     do
@@ -34,6 +35,7 @@ function gl () {
 }
 
 function gh () {
+    kill $(ps aux | grep 'Xcode' | awk '{print $2}')
     now_pwd=`pwd`
     while [[ ! -d ".git" ]]
     do
@@ -73,6 +75,7 @@ function gh () {
 }
 
 function gr () {
+    kill $(ps aux | grep 'Xcode' | awk '{print $2}')
     now_pwd=`pwd`
     while [[ ! -d ".git" ]]
     do
@@ -136,6 +139,7 @@ function gr () {
 }
 
 function gnb () {
+    kill $(ps aux | grep 'Xcode' | awk '{print $2}')
     default_branch=''
     if [ -z "$1" ]; then
         echo "Usage: gnb branchName"
@@ -298,6 +302,7 @@ function gbeginpr() {
 
 
 function gmergepr() {
+    kill $(ps aux | grep 'Xcode' | awk '{print $2}')
     now_pwd=`pwd`
     while [[ ! -d ".git" ]];do
         cd ..
