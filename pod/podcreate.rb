@@ -30,18 +30,20 @@ Pod::Spec.new do |s|
     s.swift_version = '4.1'
     s.source_files = 'Classes/**/*.{h,m,mm,cpp,c,hpp,cc,swift}', "R\#{s.name}.h", "R\#{s.name}.m"
     s.exclude_files = 'Classes/**/*-Bridging-Header.h'
-    # s.resources = "Assets/**/*.{bundle,json,xcassets,gif}"
-    s.resource_bundles = { s.name => ['Assets/**/*.*', 'Classes/**/*.{xib,storyboard}'] }
+    if s.static_framework
+        s.resource_bundles = { s.name => ['Assets/**/*.*', 'Classes/**/*.{xib,storyboard}'] }
+    else
+        s.resources = "Assets/**/*.{bundle,json,xcassets,gif,jpg,png}", "Classes/**/*.{xib,storyboard}"
+    end
+
+
 
     custom_isDynamicFramework = !s.static_framework ? "--dynamic-framework" : ""
-    # FIXME 这里暂时需要自己重复申明一次
-    isResourceBundle = true
-    custom_isResourceBundle = isResourceBundle ? "--is-resource-bundle" : ""
+    custom_isResourceBundle = "--is-resource-bundle"
 
     custom_bundle_header = ""
     custom_bundle_imp = ""
     if !s.static_framework
-        if isResourceBundle
             custom_bundle_header = <<-EOS
 NSBundle* \#{s.name}Bundle(void);
                EOS
@@ -56,9 +58,7 @@ NSBundle* \#{s.name}Bundle(void) {
     return _\#{s.name}Bundle;
 }
                               EOS
-        end
     else
-        if isResourceBundle
             custom_bundle_header = <<-EOS
 NSBundle* \#{s.name}Bundle(void);
 EOS
@@ -73,7 +73,6 @@ NSBundle* \#{s.name}Bundle(void) {
     return _\#{s.name}Bundle;
 }
 EOS
-        end
     end
 
     s.script_phase  =
