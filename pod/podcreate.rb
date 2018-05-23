@@ -44,13 +44,8 @@ Pod::Spec.new do |s|
     custom_isDynamicFramework = !s.static_framework ? "--dynamic-framework" : ""
     custom_isResourceBundle = "--is-resource-bundle"
 
-    custom_bundle_header = ""
     custom_bundle_imp = ""
     if !s.static_framework
-        custom_bundle_header = <<-EOS
-            NSBundle* \#{s.name}Bundle(void);
-        EOS
-
         custom_bundle_imp = <<-EOS
             static NSBundle *_\#{s.name}Bundle = nil;
             NSBundle* \#{s.name}Bundle(void) {
@@ -63,10 +58,6 @@ Pod::Spec.new do |s|
             }
         EOS
     else
-        custom_bundle_header = <<-EOS
-            NSBundle* \#{s.name}Bundle(void);
-        EOS
-
         custom_bundle_imp = <<-EOS
             static NSBundle *_\#{s.name}Bundle = nil;
             NSBundle* \#{s.name}Bundle(void) {
@@ -80,6 +71,19 @@ Pod::Spec.new do |s|
         EOS
     end
 
+    custom_bundle_header = <<-EOS
+        NSBundle* \#{s.name}Bundle(void);
+    EOS
+
+    generate_bundle_str = <<-EOS
+        result=`cat RResource\#{s.name}.h | grep '\#{s.name}Bundle'`
+        if [ -z "$result" ]; then
+            echo '\#{custom_bundle_header}' > RResource\#{s.name}.h
+        fi
+        echo '\#{custom_bundle_imp}' > RResource\#{s.name}.m
+    EOS
+    system(generate_bundle_str)
+
     s.script_phase  =
     [
         { :name => 'R Objc', :execution_position => :before_compile, :script => <<-EOS
@@ -88,16 +92,6 @@ Pod::Spec.new do |s|
             then
               echo "Generate R File"
               $PODS_ROOT/MGR.objc/MGRobjec/Robjc -p \\\"$PODS_TARGET_SRCROOT\\\" --skip-storyboards --skip-strings --skip-themes --skip-segues \#{custom_isDynamicFramework} \#{custom_isResourceBundle} --resource-bundle \#{s.name}
-            fi
-        EOS
-        },
-
-        { :name => 'Generate Bundle Function', :execution_position => :before_compile, :script => <<-EOS
-            result=`cat ${PODS_TARGET_SRCROOT}/RResource\#{s.name}.h | grep '\#{s.name}Bundle'`
-            if [ -z "$result" ]; then
-                echo 'Write Bundle Function'
-                echo '\#{custom_bundle_header}' >> $PODS_TARGET_SRCROOT/RResource\#{s.name}.h
-                echo '\#{custom_bundle_imp}' >> $PODS_TARGET_SRCROOT/RResource\#{s.name}.m
             fi
         EOS
         },
