@@ -4,6 +4,7 @@ pod_name = ARGV[1]
 
 system "cd #{pwd}"
 system 'mkdir', '-p', "#{pod_name}/Classes"
+system 'mkdir', '-p', "#{pod_name}/Tests"
 system 'mkdir', '-p', "#{pod_name}/Assets"
 system 'mkdir', '-p', "#{pod_name}/Assets/Assets.xcassets"
 system 'touch', "#{pod_name}/Assets/Assets.xcassets/Contents.json"
@@ -37,6 +38,9 @@ Pod::Spec.new do |s|
         s.resource_bundles = { s.name => ['Assets/**/*.*', 'Classes/**/*.{xib,storyboard}'] }
     else
         s.resources = "Assets/**/*.{bundle,json,xcassets,gif,jpg,png}", "Classes/**/*.{xib,storyboard}"
+    end
+    s.test_spec 'Tests' do |t|
+        t.source_files = 'Tests/**/*.{h,m,mm,cpp,c,hpp,cc,swift}'
     end
 
 
