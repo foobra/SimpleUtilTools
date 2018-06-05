@@ -43,8 +43,6 @@ Pod::Spec.new do |s|
         t.source_files = 'Tests/**/*.{h,m,mm,cpp,c,hpp,cc,swift}'
     end
 
-
-
     custom_isDynamicFramework = !s.static_framework ? "--dynamic-framework" : ""
     custom_isResourceBundle = "--is-resource-bundle"
 
