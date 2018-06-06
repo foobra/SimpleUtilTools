@@ -40,7 +40,7 @@ Pod::Spec.new do |s|
     if s.static_framework
         s.resource_bundles = { s.name => ['Assets/Assets.xcassets', 'Assets/Bundles/*.bundle', 'Assets/Res/**/*.*', 'Classes/**/*.{xib,storyboard}'] }
     else
-        s.resources = ['Assets/Assets.xcassets', 'Assets/Bundles/*.bundle', 'Assets/Res/**/*.*', 'Classes/**/*.{xib,storyboard}']
+        s.resources = ['Assets/Assets.xcassets', 'Assets/Bundles/**/*.bundle', 'Assets/Res/**/*.*', 'Classes/**/*.{xib,storyboard}']
     end
 
     s.test_spec 'Tests' do |t|
