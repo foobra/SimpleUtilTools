@@ -14,6 +14,8 @@ system 'touch', "#{pod_name}/Assets/Assets.xcassets/Contents.json"
 system 'touch', "#{pod_name}/#{pod_name}.podspec"
 system 'touch', "#{pod_name}/Classes/.gitkeep"
 system 'touch', "#{pod_name}/Assets/.gitkeep"
+system 'touch', "#{pod_name}/Assets/Bundles/.gitkeep"
+system 'touch', "#{pod_name}/Assets/Res/.gitkeep"
 
 system 'touch', "#{pod_name}/R#{pod_name}.h"
 system 'touch', "#{pod_name}/R#{pod_name}.m"
