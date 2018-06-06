@@ -6,7 +6,10 @@ system "cd #{pwd}"
 system 'mkdir', '-p', "#{pod_name}/Classes"
 system 'mkdir', '-p', "#{pod_name}/Tests"
 system 'mkdir', '-p', "#{pod_name}/Assets"
+system 'mkdir', '-p', "#{pod_name}/Assets/Bundles"
+system 'mkdir', '-p', "#{pod_name}/Assets/Res"
 system 'mkdir', '-p', "#{pod_name}/Assets/Assets.xcassets"
+
 system 'touch', "#{pod_name}/Assets/Assets.xcassets/Contents.json"
 system 'touch', "#{pod_name}/#{pod_name}.podspec"
 system 'touch', "#{pod_name}/Classes/.gitkeep"
@@ -21,7 +24,7 @@ podspec_text =  <<-EOF
 Pod::Spec.new do |s|
     s.name         = "#{pod_name}"
     s.version      = "1.0.0"
-    s.homepage     = "https://www.github.com"
+    s.homepage     = "https://www.migu.cn"
     s.author       = "TSG iOS"
     s.summary      = s.name
     s.source       = { :path => '.' }
@@ -35,10 +38,11 @@ Pod::Spec.new do |s|
     s.source_files = 'Classes/**/*.{h,m,mm,cpp,c,hpp,cc,swift}', "R\#{s.name}.h", "R\#{s.name}.m", "RResource\#{s.name}.h", "RResource\#{s.name}.m"
     s.exclude_files = 'Classes/**/*-Bridging-Header.h'
     if s.static_framework
-        s.resource_bundles = { s.name => ['Assets/**/*.*', 'Classes/**/*.{xib,storyboard}'] }
+        s.resource_bundles = { s.name => ['Assets/Assets.xcassets', 'Assets/Bundles/*.bundle', 'Assets/Res/**/*.*', 'Classes/**/*.{xib,storyboard}'] }
     else
-        s.resources = "Assets/**/*.{bundle,json,xcassets,gif,jpg,png}", "Classes/**/*.{xib,storyboard}"
+        s.resources = ['Assets/Assets.xcassets', 'Assets/Bundles/*.bundle', 'Assets/Res/**/*.*', 'Classes/**/*.{xib,storyboard}']
     end
+
     s.test_spec 'Tests' do |t|
         t.source_files = 'Tests/**/*.{h,m,mm,cpp,c,hpp,cc,swift}'
     end
