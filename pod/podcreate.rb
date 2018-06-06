@@ -24,8 +24,8 @@ podspec_text =  <<-EOF
 Pod::Spec.new do |s|
     s.name         = "#{pod_name}"
     s.version      = "1.0.0"
-    s.homepage     = "https://www.migu.cn"
-    s.author       = "TSG iOS"
+    s.homepage     = "https://www.github.com"
+    s.author       = "iOS"
     s.summary      = s.name
     s.source       = { :path => '.' }
     s.platform     = :ios, '9.0'
