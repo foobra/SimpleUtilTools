@@ -10,7 +10,7 @@
     2. 设置url token
         1. 查找到自己的gitlab url 后面备用 http://10.148.68.13
         2. 终端执行 gitlab url http://10.148.68.13
-        3. 网页打开 http://10.148.68.13/profile/account 查找到自己的gitlab token
+        3. 网页打开 http://10.148.68.13/profile/personal_access_tokens 点击Create personal access token, 勾选api和read_user两个选项, 生成好之后立刻复制出来保存, 因为网页一关闭就看不见了
         4. 终端执行 gitlab token xxxx
         5. 终端执行 git config gitlab.url http://10.148.68.13 上面查出来的url
         6. 终端执行 git config gitlab.token xxxxx  上面查出来的 token

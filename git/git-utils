@@ -1,6 +1,5 @@
 #!/bin/sh
 function gl () {
-    pkill Xcode
     now_pwd=`pwd`
     while [[ ! -d ".git" ]]
     do
@@ -35,7 +34,6 @@ function gl () {
 }
 
 function gh () {
-    pkill Xcode
     now_pwd=`pwd`
     while [[ ! -d ".git" ]]
     do
@@ -75,7 +73,6 @@ function gh () {
 }
 
 function gr () {
-    pkill Xcode
     now_pwd=`pwd`
     while [[ ! -d ".git" ]]
     do
@@ -127,7 +124,7 @@ function gr () {
 
 
             if [[ `git diff $user_branch  origin/$branch | grep diff`  != "" ]]; then
-                gitlab addMergeRequest $projectId $user_branch $branch $assignee $msg
+                gitlab addMergeRequest $projectId $user_branch $branch $assignee $msg | grep -p "http.*/merge_requests/\d\+" -o | xargs -I {} open {}
             else
                 echo "Your branch $user_branch is sync with $branch"
             fi

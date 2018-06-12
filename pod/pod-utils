@@ -7,7 +7,6 @@ function podconflict () {
         if [[ "$result" != "" ]];then
             echo "Podfile conflict, please resolve it first and then execute pod add Podfile"
         else
-            pkill Xcode
             git checkout Pod* --ours
             pod install
             git add Pod*
@@ -15,7 +14,6 @@ function podconflict () {
     fi
 }
 
-alias pi="pkill Xcode && pod install"
 function podcreate () {
     ruby $HOME/SimpleUtilTools/pod/podcreate.rb `pwd` $1
 }
