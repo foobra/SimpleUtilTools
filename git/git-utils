@@ -337,6 +337,16 @@ function gci() {
     git commit -m "$*"
 }
 
+function gvpn() {
+    git_path=`git config remote.origin.url | cut -d ':' -f 2`
+    git remote set-url origin 'git@10.148.68.13:'$git_path
+}
+
+function glocal() {
+    git_path=`git config remote.origin.url | cut -d ':' -f 2`
+    git remote set-url origin 'git@172.20.92.28:'$git_path
+}
+
 alias grst='git reset . && git checkout . && git clean -df .'
 alias gf='git diff'
 alias gg='git log | less'
