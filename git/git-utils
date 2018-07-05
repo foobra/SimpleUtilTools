@@ -71,7 +71,7 @@ function gh () {
         echo "you are not in your own branch"
     fi
 
-    origin_url = `git config remote.origin.url`
+    origin_url=`git config remote.origin.url`
     git_ip=""
     git_path=""
     url=""
@@ -88,12 +88,12 @@ function gh () {
 
     if [[ -x "$(command -v open)" ]]
     then
-        open url
+        open $url
     fi
 
     if [[ -x "$(command -v start)" ]]
     then
-        start url
+        start $url
     fi
 }
 
