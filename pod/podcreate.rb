@@ -35,7 +35,7 @@ Pod::Spec.new do |s|
     s.framework    = "Foundation", "UIKit"
     s.requires_arc = true
     s.static_framework = true
-    s.cocoapods_version = '= 1.4.0'
+    s.cocoapods_version = '= 1.5.3'
     s.swift_version = '4.1'
     s.source_files = 'Classes/**/*.{h,m,mm,cpp,c,hpp,cc,swift}', "R\#{s.name}.h", "R\#{s.name}.m", "RResource\#{s.name}.h", "RResource\#{s.name}.m"
     s.exclude_files = 'Classes/**/*-Bridging-Header.h'
