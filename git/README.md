@@ -3,6 +3,7 @@
 0. Windows用户先安装 Git for Windows, https://git-scm.com/download/win
 1. git配置 (每个用户执行一次)
     1. 终端执行 git config --global user.name gs(这里换成自己的名字拼音, 或者拼音缩写)
+    2. 终端执行 git config --global user.email xxx@xxx.com (自己的邮箱)
 2. update config (每个用户只需要执行一次)
     1. cd $HOME && git clone https://github.com/foobra/SimpleUtilTools.git && cd SimpleUtilTools && git pull
     2. echo 'source $HOME/SimpleUtilTools/profiles' >> ~/.bash_profile
