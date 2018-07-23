@@ -45,6 +45,12 @@ function gh () {
             return
         fi
     done
+
+    if [[ ! -f ".git/hooks/pre-commit" && -f "scripts/pre-commit/copy-commit.sh" ]]
+    then
+        echo setup pre-commit hooks
+        cd scripts/pre-commit && sh copy-commit.sh && cd -
+    fi
     head=`cat .git/HEAD`
     current_head=`echo $head | cut -b 17-`
     user=${current_head%%_*}
@@ -324,7 +330,6 @@ function gbeginpr() {
 
 
 function gmergepr() {
-    pkill Xcode
     now_pwd=`pwd`
     while [[ ! -d ".git" ]];do
         cd ..
