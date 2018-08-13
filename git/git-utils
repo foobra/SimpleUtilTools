@@ -341,23 +341,27 @@ function gmergepr() {
     done;
 
 
-    if [ -z "$1" ]; then
-        echo "Usage: gmergepr user_branch"
-        return
+    current_head=`git branch | grep -e "^*" | cut -d' ' -f 2`
+    current_head2="${current_head}"
+    merged_head="${current_head}"
+    if [ ! -z "$1" ]; then
+        echo "automaticly merge $1"
+        merged_head="$1"
+    fi
+
+    if [[ ! $merged_head == *_* ]]; then
+        echo "Merge branch must be xx_yy, not $merged_head"
+        return;
+    fi
+
+
+    if [[ ! -z $(git status -uno --porcelain) ]];then
+        git add -u .
+        git stash
+        git checkout $merged_head && gl && gdc && git merge - && git push && git checkout - && git push && git checkout $current_head2
+        git stash apply
     else
-        if [[ ! -z $(git status -uno --porcelain) ]];then
-            git add -u .
-            git stash
-            current_head=`git branch | grep -e "^*" | cut -d' ' -f 2`
-            current_head2="${current_head}"
-            git checkout $1 && gl && gdc && git merge - && git push && git checkout - && git push && git checkout $current_head2
-            git stash apply
-            return
-        else
-            current_head=`git branch | grep -e "^*" | cut -d' ' -f 2`
-            current_head2="${current_head}"
-            git checkout $1 && gl && gdc && git merge - && git push && git checkout - && git push && git checkout $current_head2
-        fi
+        git checkout $merged_head && gl && gdc && git merge - && git push && git checkout - && git push && git checkout $current_head2
     fi
 }
 
