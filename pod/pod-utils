@@ -1,6 +1,8 @@
 #!/bin/sh
 function podconflict () {
     if [ -f "./Podfile" ]; then
+        # first add podfile
+        git add Podfile
         conflict_list=`git diff --name-only --diff-filter=U | sed 's/[[:space:]]/_-_/g' | tr "\n" "^"`
         result=$(echo $conflict_list | grep "Podfile^")
 
