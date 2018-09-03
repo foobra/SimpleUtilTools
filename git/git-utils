@@ -326,6 +326,7 @@ function glocal2() {
 
 function setup_git_pre_commit_hooks() {
     if [[ ! -f .git/hooks/pre-commit && -f scripts/pre-commit/pre-commit.sh ]]; then
+        echo "Copy Pre-Commit to hooks"
         mkdir -p .git/hooks
         cp -f scripts/pre-commit/pre-commit.sh .git/hooks/pre-commit
         chmod +x .git/hooks/pre-commit
