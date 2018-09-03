@@ -243,6 +243,7 @@ function gmergepr() {
             return
         fi
     done;
+    setup_git_pre_commit_hooks
 
 
     current_head=`git branch | grep -e "^*" | cut -d' ' -f 2`
