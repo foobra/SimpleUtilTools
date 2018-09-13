@@ -270,6 +270,10 @@ function gmergepr() {
     fi
 }
 
+function gsuyansync() {
+    git fetch suyan && git checkout migu && git branch -D develop && git checkout -b develop suyan/develop
+}
+
 function gci() {
     git add .
     git add -u
