@@ -20,6 +20,7 @@ system 'touch', "#{pod_name}/Assets/Res/.gitkeep"
 system 'touch', "#{pod_name}/Tests/.gitkeep"
 system 'touch', "#{pod_name}/Vendors/.gitkeep"
 
+system 'touch', "#{pod_name}/Classes/R#{pod_name}DummyStub.h"
 system 'touch', "#{pod_name}/R#{pod_name}.h"
 system 'touch', "#{pod_name}/R#{pod_name}.m"
 system 'touch', "#{pod_name}/RResource#{pod_name}.h"
