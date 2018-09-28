@@ -28,7 +28,7 @@ system 'touch', "#{pod_name}/RResource#{pod_name}.m"
 
 podspec_text =  <<-EOF
 Pod::Spec.new do |s|
-    s.name         = "#{pod_name}"
+    s.name         = File.basename(path, ".*")
     s.version      = "1.0.0"
     s.homepage     = "https://www.github.com"
     s.author       = "iOS"
