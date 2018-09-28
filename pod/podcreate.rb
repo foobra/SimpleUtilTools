@@ -43,10 +43,13 @@ Pod::Spec.new do |s|
     s.swift_version = '4.1'
     s.source_files = 'Classes/**/*.{h,m,mm,cpp,c,hpp,cc,swift}', "R\#{s.name}.h", "R\#{s.name}.m", "RResource\#{s.name}.h", "RResource\#{s.name}.m"
     s.exclude_files = 'Classes/**/*-Bridging-Header.h'
+    s.vendored_libraries  = "Vendors/**/*.a"
+    s.vendored_framework = 'Vendors/**/*.framework'
     if s.static_framework
         s.resource_bundles = { s.name => ['Assets/Assets.xcassets', 'Assets/Bundles/*.bundle', 'Assets/Res/**/*.*', 'Classes/**/*.{xib,storyboard}'] }
+        s.resources = ['Vendors/**/*.bundle']
     else
-        s.resources = ['Assets/Assets.xcassets', 'Assets/Bundles/**/*.bundle', 'Assets/Res/**/*.*', 'Classes/**/*.{xib,storyboard}']
+        s.resources = ['Vendors/**/*.bundle', 'Assets/Assets.xcassets', 'Assets/Bundles/**/*.bundle', 'Assets/Res/**/*.*', 'Classes/**/*.{xib,storyboard}']
     end
 
     s.test_spec 'Tests' do |t|
