@@ -6,6 +6,8 @@ system "cd #{pwd}"
 system 'mkdir', '-p', "#{pod_name}/Classes"
 system 'mkdir', '-p', "#{pod_name}/Tests"
 system 'mkdir', '-p', "#{pod_name}/Vendors"
+system 'mkdir', '-p', "#{pod_name}/Vendors/Libraries"
+system 'mkdir', '-p', "#{pod_name}/Vendors/Frameworks"
 system 'mkdir', '-p', "#{pod_name}/Assets"
 system 'mkdir', '-p', "#{pod_name}/Assets/Bundles"
 system 'mkdir', '-p', "#{pod_name}/Assets/Res"
@@ -19,6 +21,8 @@ system 'touch', "#{pod_name}/Assets/Bundles/.gitkeep"
 system 'touch', "#{pod_name}/Assets/Res/.gitkeep"
 system 'touch', "#{pod_name}/Tests/.gitkeep"
 system 'touch', "#{pod_name}/Vendors/.gitkeep"
+system 'touch', "#{pod_name}/Vendors/Libraries/.gitkeep"
+system 'touch', "#{pod_name}/Vendors/Frameworks/.gitkeep"
 
 system 'touch', "#{pod_name}/Classes/R#{pod_name}DummyStub.h"
 system 'touch', "#{pod_name}/R#{pod_name}.h"
@@ -41,7 +45,7 @@ Pod::Spec.new do |s|
     s.static_framework = true
     s.cocoapods_version = '= 1.5.3'
     s.swift_version = '4.1'
-    s.source_files = 'Classes/**/*.{h,m,mm,cpp,c,hpp,cc,swift}', "R\#{s.name}.h", "R\#{s.name}.m", "RResource\#{s.name}.h", "RResource\#{s.name}.m"
+    s.source_files = 'Classes/**/*.{h,m,mm,cpp,c,hpp,cc,swift}', "R\#{s.name}.h", "R\#{s.name}.m", "RResource\#{s.name}.h", "RResource\#{s.name}.m", 'Vendors/Libraries/**/*.{h,m,mm,cpp,c,hpp,cc,swift}'
     s.exclude_files = 'Classes/**/*-Bridging-Header.h'
     s.vendored_libraries  = "Vendors/**/*.a"
     s.vendored_framework = 'Vendors/**/*.framework'
