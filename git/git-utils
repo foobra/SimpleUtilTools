@@ -31,6 +31,7 @@ function gl () {
         fi
     else
         echo "you are not in your own branch"
+        return
     fi
 }
 
@@ -72,6 +73,7 @@ function gh () {
         fi
     else
         echo "you are not in your own branch"
+        return
     fi
 
     origin_url=`git config remote.origin.url`
