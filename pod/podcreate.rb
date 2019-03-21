@@ -24,7 +24,7 @@ system 'touch', "#{pod_name}/Vendors/.gitkeep"
 system 'touch', "#{pod_name}/Vendors/Libraries/.gitkeep"
 system 'touch', "#{pod_name}/Vendors/Frameworks/.gitkeep"
 
-system 'touch', "#{pod_name}/Classes/R#{pod_name}DummyStub.h"
+system 'touch', "#{pod_name}/Classes/#{pod_name}.h"
 system 'touch', "#{pod_name}/R#{pod_name}.h"
 system 'touch', "#{pod_name}/R#{pod_name}.m"
 system 'touch', "#{pod_name}/RResource#{pod_name}.h"
@@ -130,9 +130,26 @@ assets_json = <<-EOF
 }
 EOF
 
+
+
+header_content = <<-EOF
+//
+//  #{pod_name}.h
+//  Pods
+//
+//  Created by TSG on 1970/01/01.
+//
+
+#ifndef #{pod_name}_h
+#define #{pod_name}_h
+
+
+#endif /* #{pod_name}_h */
+EOF
+
+
 File.write("#{pod_name}/#{pod_name}.podspec", podspec_text)
 File.write("#{pod_name}/Assets/Assets.xcassets/Contents.json", assets_json)
-
-
+File.write("#{pod_name}/Classes/#{pod_name}.h", header_content)
 
 
