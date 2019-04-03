@@ -289,8 +289,8 @@ function gvpn() {
         git_path=`git config remote.origin.url | cut -d "/" -f4,5 | cut -d "." -f 1`
         git remote set-url origin 'http://10.148.68.13/'$git_path
     else
-        git_path=`git config remote.origin.url | cut -d ':' -f 2 | cut -d "." -f 1`
-        git remote set-url origin 'git@10.148.68.13:'$git_path
+        git_path=`git config remote.origin.url | cut -d "/" -f4,5 | cut -d "." -f 1`
+        git remote set-url origin 'git@10.148.68.13:2222/:'$git_path
     fi
 }
 
@@ -302,7 +302,7 @@ function g_temp_set_url() {
         git remote set-url origin 'http://10.148.91.3/'$git_path
     else
         git_path=`git config remote.origin.url | cut -d ':' -f 2 | cut -d "." -f 1`
-        git remote set-url origin 'git@10.148.91.3:'$git_path
+        git remote set-url origin 'git@10.148.91.3:2222/'$git_path
     fi
 }
 
@@ -314,7 +314,7 @@ function glocal() {
         git remote set-url origin 'http://172.20.92.28/'$git_path
     else
         git_path=`git config remote.origin.url | cut -d ':' -f 2 | cut -d "." -f 1`
-        git remote set-url origin 'git@172.20.92.28:'$git_path
+        git remote set-url origin 'git@172.20.92.28:2222/'$git_path
     fi
 }
 
