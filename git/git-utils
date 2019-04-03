@@ -86,9 +86,10 @@ function gh () {
         git_path=`git config remote.origin.url | cut -d "/" -f4,5 | cut -d "." -f 1`
         url='http://'$git_ip'/'$git_path'/merge_requests/new?merge_request[source_branch]='$user_branch'&merge_request[target_branch]='$branch
     else
-        git_ip=`git config remote.origin.url | cut -d ':' -f 1 | cut -d '@' -f 2`
-        git_path=`git config remote.origin.url | cut -d ':' -f 2 | cut -d "." -f 1`
-        url='http://'$git_ip'/'$git_path'/merge_requests/new?merge_request[source_branch]='$user_branch'&merge_request[target_branch]='$branch
+        git_ip=`git config remote.origin.url | grep -e '\([0-9]\+\.\)\{3\}\d\+' -o`
+        git_path1=`git config remote.origin.url | sed 's/ssh\:\/\///g' |  rev | cut -d "/" -f2 | rev | cut -d ":" -f2`
+        git_path2=`git config remote.origin.url | sed 's/ssh\:\/\///g' | cut -d ":" -f2 | rev | cut -d "/" -f1 | rev | cut -d "." -f1`
+        url='http://'$git_ip'/'$git_path1'/'$git_path2'/merge_requests/new?merge_request[source_branch]='$user_branch'&merge_request[target_branch]='$branch
     fi
 
     if [[ -x "$(command -v open)" ]]
