@@ -303,23 +303,13 @@ function gvpn() {
         git_path=`git config remote.origin.url | cut -d "/" -f4,5 | cut -d "." -f 1`
         git remote set-url origin 'http://10.148.68.13/'$git_path
     else
-        git_path=`git config remote.origin.url | cut -d "/" -f4,5 | cut -d "." -f 1`
-        git remote set-url origin 'git@10.148.68.13:2222/:'$git_path
+        git_ip=`git config remote.origin.url | grep -e '\([0-9]\+\.\)\{3\}[0-9]\+' -o`
+        git_path1=`git config remote.origin.url | sed 's/ssh\:\/\///g' | rev2 | cut -d "/" -f2 | rev2 | cut -d ":" -f2`
+        git_path2=`git config remote.origin.url | sed 's/ssh\:\/\///g' | cut -d ":" -f2 | rev2 | cut -d "/" -f1 | rev2 | cut -d "." -f1`
+        git remote set-url origin 'ssh://git@10.148.91.3:2222/'$git_path1'/'$git_path2'.git'
     fi
 }
 
-function g_temp_set_url() {
-    origin_url=`git config remote.origin.url`
-    if [[ $origin_url =~ "http" ]]
-    then
-        git_path=`git config remote.origin.url | cut -d "/" -f4,5 | cut -d "." -f 1`
-        git remote set-url origin 'http://10.148.91.3/'$git_path
-    else
-        git_path=`git config remote.origin.url | cut -d ':' -f 2 | cut -d "." -f 1`
-        echo $git_path
-        git remote set-url origin 'ssh://git@10.148.91.3:2222/'$git_path'.git'
-    fi
-}
 
 function glocal() {
     origin_url=`git config remote.origin.url`
@@ -328,8 +318,10 @@ function glocal() {
         git_path=`git config remote.origin.url | cut -d "/" -f4,5 | cut -d "." -f 1`
         git remote set-url origin 'http://172.20.92.28/'$git_path
     else
-        git_path=`git config remote.origin.url | cut -d ':' -f 2 | cut -d "." -f 1`
-        git remote set-url origin 'git@172.20.92.28:2222/'$git_path
+        git_ip=`git config remote.origin.url | grep -e '\([0-9]\+\.\)\{3\}[0-9]\+' -o`
+        git_path1=`git config remote.origin.url | sed 's/ssh\:\/\///g' |  rev2 | cut -d "/" -f2 | rev2 | cut -d ":" -f2`
+        git_path2=`git config remote.origin.url | sed 's/ssh\:\/\///g' | cut -d ":" -f2 | rev2 | cut -d "/" -f1 | rev2 | cut -d "." -f1`
+        git remote set-url origin 'ssh://git@10.148.91.4:2222/'$git_path1'/'$git_path2'.git'
     fi
 }
 

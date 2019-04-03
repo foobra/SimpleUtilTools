@@ -1,11 +1,10 @@
 #!/bin/sh
 function update_tools() {
     folder=`pwd`
-    cd $HOME
-    if [[ ! -d "SimpleUtilTools" ]];
-    then
-        git clone git@github.com:foobra/SimpleUtilTools.git
-    fi
-    cd SimpleUtilTools && git pull
+    cd $HOME/SimpleUtilTools && git pull
     cd $folder
+    source ~/.zshrc
+    source ~/.profile
+    source ~/.bash_profile
+    source ~/.bashrc
 }
