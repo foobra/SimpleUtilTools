@@ -302,7 +302,8 @@ function g_temp_set_url() {
         git remote set-url origin 'http://10.148.91.3/'$git_path
     else
         git_path=`git config remote.origin.url | cut -d ':' -f 2 | cut -d "." -f 1`
-        git remote set-url origin 'ssh://git@10.148.91.3:2222/'$git_path
+        echo $git_path
+        git remote set-url origin 'ssh://git@10.148.91.3:2222/'$git_path'.git'
     fi
 }
 
