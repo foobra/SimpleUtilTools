@@ -112,7 +112,7 @@ Pod::Spec.new do |s|
               echo "Generate R File"
               $PODS_ROOT/MGR.objc/MGRobjec/Robjc -p \\\"$PODS_TARGET_SRCROOT\\\" --skip-storyboards --skip-strings --skip-themes --skip-segues \#{custom_isDynamicFramework} \#{custom_isResourceBundle} --resource-bundle \#{s.name}
               cd $PODS_TARGET_SRCROOT
-              sed -i '' -E 's/[[:space:]]*$//' R#{s.name}.m
+              sed -i '' -E 's/[[:space:]]*$//' R\#{s.name}.m
               cd -
             fi
         EOS
