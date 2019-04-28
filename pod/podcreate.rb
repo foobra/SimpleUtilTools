@@ -44,7 +44,7 @@ Pod::Spec.new do |s|
     s.requires_arc = true
     s.static_framework = true
     s.cocoapods_version = '= 1.6.0'
-    s.swift_version = '4.1'
+    s.swift_version = '5.0'
     s.source_files = 'Classes/**/*.{h,m,mm,cpp,c,hpp,cc,swift}', "R\#{s.name}.h", "R\#{s.name}.m", "RResource\#{s.name}.h", "RResource\#{s.name}.m", 'Vendors/Libraries/**/*.{h,m,mm,cpp,c,hpp,cc,swift}'
     s.exclude_files = 'Classes/**/*-Bridging-Header.h'
     s.vendored_libraries  = "Vendors/**/*.a"
