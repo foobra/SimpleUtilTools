@@ -1,0 +1,52 @@
+#!/bin/sh
+
+SDK_NAME=$1
+CONF=""
+if [[ "$2" == "Debug"  || "$2" == "debug" ]] ;then
+    echo "build debug framework"
+    CONF="Debug"
+else
+    echo "build release framework"
+    CONF="Release"
+fi
+
+PROJECT_FULL_PATH=$3
+# PROJECT_PATH=`echo $PROJECT_FULL_PATH | grep -o '^.*[/]'`
+# PROJECT_NAME=`echo $PROJECT_FULL_PATH | grep -o '[^/]*$' | cut -d '.' -f1`
+
+
+SDK_PATH=$HOME/Desktop/ios_frameworks/$SDK_NAME
+TARGET_NAME=$SDK_NAME
+
+ARM_SDK_PATH=${SDK_PATH}/${CONF}-iphoneos/${SDK_NAME}/${SDK_NAME}.framework
+X86_SDK_PATH=${SDK_PATH}/${CONF}-iphonesimulator/${SDK_NAME}/${SDK_NAME}.framework
+
+rm -rf $SDK_PATH || true
+mkdir -p $SDK_PATH || true
+mkdir -p $SDK_PATH/universal/
+
+
+
+# cd $PROJECT_PATH
+xcodebuild clean build -project $PROJECT_FULL_PATH -scheme $TARGET_NAME -configuration $CONF -sdk iphonesimulator -arch x86_64 BUILD_DIR=${SDK_PATH}
+
+
+
+xcodebuild clean build -project $PROJECT_FULL_PATH -scheme $TARGET_NAME -configuration $CONF -sdk iphoneos -arch armv7 -arch arm64 BUILD_DIR=${SDK_PATH}
+
+cp -R ${ARM_SDK_PATH} $SDK_PATH/universal/
+
+
+
+
+
+cd $SDK_PATH/universal/
+path=`echo *.framework`
+name=`echo *.framework | cut -d "." -f1`
+
+lipo -create $ARM_SDK_PATH/$SDK_NAME \
+             $X86_SDK_PATH/$SDK_NAME \
+             -output $SDK_PATH/$SDK_NAME
+cp -f $SDK_PATH/$SDK_NAME $SDK_PATH/universal/$SDK_NAME.framework/$SDK_NAME
+
+rm -rf $SDK_PATH/$SDK_NAME || true
