@@ -11,15 +11,20 @@ else
 fi
 
 PROJECT_FULL_PATH=$3
+
+TARGET_NAME=""
+if [ -e "$4" ]; then
+    TARGET_NAME=$4
+else
+    TARGET_NAME=$SDK_NAME
+fi
+
 # PROJECT_PATH=`echo $PROJECT_FULL_PATH | grep -o '^.*[/]'`
 # PROJECT_NAME=`echo $PROJECT_FULL_PATH | grep -o '[^/]*$' | cut -d '.' -f1`
 
 
 SDK_PATH=$HOME/Desktop/ios_frameworks/$SDK_NAME
-TARGET_NAME=$SDK_NAME
 
-ARM_SDK_PATH=${SDK_PATH}/${CONF}-iphoneos/${SDK_NAME}/${SDK_NAME}.framework
-X86_SDK_PATH=${SDK_PATH}/${CONF}-iphonesimulator/${SDK_NAME}/${SDK_NAME}.framework
 
 rm -rf $SDK_PATH || true
 mkdir -p $SDK_PATH || true
@@ -27,12 +32,25 @@ mkdir -p $SDK_PATH/universal/
 
 
 
-# cd $PROJECT_PATH
 xcodebuild clean build -project $PROJECT_FULL_PATH -scheme $TARGET_NAME -configuration $CONF -sdk iphonesimulator -arch x86_64 BUILD_DIR=${SDK_PATH}
-
-
-
 xcodebuild clean build -project $PROJECT_FULL_PATH -scheme $TARGET_NAME -configuration $CONF -sdk iphoneos -arch armv7 -arch arm64 BUILD_DIR=${SDK_PATH}
+
+
+
+ARM_SDK_PATH=""
+X86_SDK_PATH=""
+
+if [ -d "${SDK_PATH}/${CONF}-iphoneos/${SDK_NAME}/${SDK_NAME}.framework" ]; then
+   ARM_SDK_PATH=${SDK_PATH}/${CONF}-iphoneos/${SDK_NAME}/${SDK_NAME}.framework
+else
+   ARM_SDK_PATH=${SDK_PATH}/${CONF}-iphoneos/${SDK_NAME}.framework
+fi
+
+if [ -d "${SDK_PATH}/${CONF}-iphonesimulator/${SDK_NAME}/${SDK_NAME}.framework" ]; then
+   X86_SDK_PATH=${SDK_PATH}/${CONF}-iphonesimulator/${SDK_NAME}/${SDK_NAME}.framework
+else
+   X86_SDK_PATH=${SDK_PATH}/${CONF}-iphonesimulator/${SDK_NAME}.framework
+fi
 
 cp -R ${ARM_SDK_PATH} $SDK_PATH/universal/
 
