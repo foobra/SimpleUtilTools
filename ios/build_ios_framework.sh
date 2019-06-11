@@ -29,7 +29,6 @@ SDK_PATH=$HOME/Desktop/ios_frameworks/$SDK_NAME
 
 rm -rf $SDK_PATH || true
 mkdir -p $SDK_PATH || true
-mkdir -p $SDK_PATH/universal/
 
 
 
@@ -53,18 +52,25 @@ else
    X86_SDK_PATH=${SDK_PATH}/${CONF}-iphonesimulator/${TARGET_NAME}.framework
 fi
 
-cp -R ${ARM_SDK_PATH} $SDK_PATH/universal/
 
 
 
 
-cd $SDK_PATH/universal/
-path=`echo *.framework`
-name=`echo *.framework | cut -d "." -f1`
+# cd $X86_SDK_PATH/..
+# path=`echo *.framework`
+# name=`echo *.framework | cut -d "." -f1`
+
+# plutil -insert CFBundleSupportedPlatforms.1 -string iPhoneOS $X86_SDK_PATH/Info.plist
+cp -R ${ARM_SDK_PATH}/Modules/${TARGET_NAME}.swiftmodule/* $X86_SDK_PATH/Modules/${TARGET_NAME}.swiftmodule/ || true
 
 lipo -create $ARM_SDK_PATH/$TARGET_NAME \
              $X86_SDK_PATH/$TARGET_NAME \
              -output $SDK_PATH/$TARGET_NAME
-cp -f $SDK_PATH/$TARGET_NAME $SDK_PATH/universal/$TARGET_NAME.framework/$TARGET_NAME
 
+cp -f $SDK_PATH/$TARGET_NAME $X86_SDK_PATH/$TARGET_NAME
 rm -rf $SDK_PATH/$TARGET_NAME || true
+
+mkdir -p $SDK_PATH/universal
+cp -R ${X86_SDK_PATH} $SDK_PATH/universal/
+cp -R ${ARM_SDK_PATH}/Info.plist $SDK_PATH/universal/${TARGET_NAME}.framework/Info.plist
+
