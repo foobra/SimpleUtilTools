@@ -20,4 +20,9 @@ then
     echo "puts scripts in profile"
     echo 'source $HOME/SimpleUtilTools/profiles' >> ~/.profile
     source ~/.profile
+else
+    touch ~/.bash_profile
+    echo "create and puts scripts in bash_profile"
+    echo 'source $HOME/SimpleUtilTools/profiles' >> ~/.bash_profile
+    source ~/.bash_profile
 fi

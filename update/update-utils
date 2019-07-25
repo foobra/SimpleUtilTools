@@ -3,8 +3,8 @@ function update_tools() {
     folder=`pwd`
     cd $HOME/SimpleUtilTools && git pull
     cd $folder
-    source ~/.zshrc
-    source ~/.profile
-    source ~/.bash_profile
-    source ~/.bashrc
+    source ~/.zshrc || true
+    source ~/.profile || true
+    source ~/.bash_profile || true
+    source ~/.bashrc || true
 }
