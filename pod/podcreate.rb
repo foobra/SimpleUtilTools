@@ -91,7 +91,14 @@ Pod::Spec.new do |s|
     end
 
     custom_bundle_header = <<-EOS
-        NSBundle* \#{s.name}Bundle(void);
+        #ifdef __cplusplus
+        extern "C"
+        {
+        #endif
+          NSBundle* \#{s.name}Bundle(void);
+        #ifdef __cplusplus
+        }
+        #endif
     EOS
 
     generate_bundle_str = <<-EOS
