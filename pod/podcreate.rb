@@ -80,11 +80,26 @@ Pod::Spec.new do |s|
         custom_bundle_imp = <<-EOS
             static NSBundle *_\#{s.name}Bundle = nil;
             NSBundle* \#{s.name}Bundle(void) {
-                if (!_\#{s.name}Bundle) {
-                    NSBundle *b1 = [NSBundle mainBundle];
-                    NSBundle *b2 = [NSBundle bundleWithPath:[b1 pathForResource:@\\\"\#{s.name}\\\" ofType:@\\\"bundle\\\"]];
-                    _\#{s.name}Bundle = b2 != nil ? b2 : b1;
-                }
+                if (_\#{s.name}Bundle)
+                    return _\#{s.name}Bundle;
+#ifdef POD_PACKAGE_UNIVERSAL_BUNDLE
+#define STRINGIFY(x) #x
+#define TOSTRING(x) STRINGIFY(x)
+              NSBundle *b1 = [NSBundle mainBundle];
+              NSBundle *b2 = [NSBundle bundleWithPath:[b1 pathForResource:@TOSTRING(POD_PACKAGE_UNIVERSAL_BUNDLE) ofType:@"bundle"]];
+              if (!b2)
+                  assert(false && "universalBundle load failed");
+              _\#{s.name}Bundle = [NSBundle bundleWithPath:[b2 pathForResource:@\\\"\#{s.name}\\\" ofType:@\\\"bundle\\\"]];
+              if (!_\#{s.name}Bundle)
+                _\#{s.name}Bundle = b2;
+#else
+              NSBundle *b1 = [NSBundle mainBundle];
+              NSBundle *b2 = [NSBundle bundleWithPath:[b1 pathForResource:@\\\"\#{s.name}\\\" ofType:@\\\"bundle\\\"]];
+              _\#{s.name}Bundle = b2 != nil ? b2 : b1;
+#endif
+
+                if (!_\#{s.name}Bundle)
+                    assert(false && "resBundle load failed");
                 return _\#{s.name}Bundle;
             }
         EOS
