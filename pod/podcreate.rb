@@ -1,4 +1,4 @@
-
+#!/bin/env ruby
 pwd = ARGV[0]
 pod_name = ARGV[1]
 

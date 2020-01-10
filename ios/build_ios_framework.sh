@@ -20,7 +20,7 @@ if [ -d "$SDK_PATH" ]; then
   rm -rf $SDK_PATH
 fi
 
-mkdir -p $SDK_PATH
+mkdir -p $SDK_PATH || true
 
 
 
@@ -74,7 +74,9 @@ lipo -create $ARM_SDK_PATH/$TARGET_NAME \
 cp -f $SDK_PATH/$TARGET_NAME $X86_SDK_PATH/$TARGET_NAME
 rm -rf $SDK_PATH/$TARGET_NAME
 
+
 mkdir -p $SDK_PATH/universal
 cp -R ${X86_SDK_PATH} $SDK_PATH/universal/
+cp -R ${X86_SDK_PATH}/../*.bundle $SDK_PATH/universal/
 cp -R ${ARM_SDK_PATH}/Info.plist $SDK_PATH/universal/${TARGET_NAME}.framework/Info.plist
 
