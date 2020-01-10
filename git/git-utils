@@ -1,4 +1,7 @@
 #!/bin/sh
+
+# git pull branch -> user_branch
+# $1 : git pull $1 branch ->current_branch
 function gl () {
     now_pwd=`pwd`
     while [[ ! -d ".git" ]]
@@ -12,29 +15,37 @@ function gl () {
         fi
     done
     setup_git_pre_commit_hooks
-    head=`cat .git/HEAD`
-    current_head=`echo $head | cut -b 17-`
-    user=${current_head%%_*}
-    if [[ $current_head = *_* ]]
-    then
-        branch=${current_head%%+*}
-        branch=${branch##*_}
-        user_branch="${user}_${branch}"
+    if [ -n "$1" ]; then
+        head=`cat .git/HEAD`
+        current_head=`echo $head | cut -b 17-`
         git fetch origin
-        git merge $user_branch origin/$user_branch
-        git merge $user_branch origin/$branch
-        if [[ $current_head = *+* ]]
-        then
-            git merge $current_head origin/${user_branch}
-            git merge $current_head origin/$current_head
-            git merge $current_head $user_branch
-        fi
+        git merge $current_head origin/$1
     else
-        echo "you are not in your own branch"
-        return
+        head=`cat .git/HEAD`
+        current_head=`echo $head | cut -b 17-`
+        user=${current_head%%_*}
+        if [[ $current_head = *_* ]]
+        then
+            branch=${current_head%%+*}
+            branch=${branch##*_}
+            user_branch="${user}_${branch}"
+            git fetch origin
+            git merge $user_branch origin/$user_branch
+            git merge $user_branch origin/$branch
+            if [[ $current_head = *+* ]]
+            then
+                git merge $current_head origin/${user_branch}
+                git merge $current_head origin/$current_head
+                git merge $current_head $user_branch
+            fi
+        else
+            echo "you are not in your own branch"
+            return
+        fi
     fi
 }
 
+# private function
 function rev2() {
     declare input=${*:-$(</dev/stdin)}
     reverse=""
@@ -48,6 +59,8 @@ function rev2() {
     # return $reverse
 }
 
+# git push user_branch and create merge request user_branch to branch
+# $1 : git push current branch and create merge request current branch to $1 branch
 function gh () {
     now_pwd=`pwd`
     while [[ ! -d ".git" ]]
@@ -62,31 +75,44 @@ function gh () {
     done
 
     setup_git_pre_commit_hooks
-    head=`cat .git/HEAD`
-    current_head=`echo $head | cut -b 17-`
-    user=${current_head%%_*}
-    if [[ $current_head = *_* ]]
-    then
-        branch=${current_head%%+*}
-        branch=${branch##*_}
-        user_branch="${user}_${branch}"
-        git fetch origin
-        git merge $user_branch origin/$user_branch
-        git merge $user_branch origin/$branch
-        if [[ $current_head = *+* ]]
-        then
-            git push origin $user_branch
-            git fetch origin
-            git checkout $current_head
-            git merge origin/${user_branch}
-            git merge $current_head origin/$current_head
-            git push origin $current_head
-        else
-            git push origin $user_branch
-        fi
+    src_branch=""
+    dst_branch=""
+    if [ -n "$1" ]; then
+       head=`cat .git/HEAD`
+       current_head=`echo $head | cut -b 17-`
+       git fetch origin
+       git push origin $current_head
+       src_branch=${current_head}
+       dst_branch=$1
     else
-        echo "you are not in your own branch"
-        return
+        head=`cat .git/HEAD`
+        current_head=`echo $head | cut -b 17-`
+        user=${current_head%%_*}
+        if [[ $current_head = *_* ]]
+        then
+            branch=${current_head%%+*}
+            branch=${branch##*_}
+            user_branch="${user}_${branch}"
+            git fetch origin
+            git merge $user_branch origin/$user_branch
+            git merge $user_branch origin/$branch
+            if [[ $current_head = *+* ]]
+            then
+                git push origin $user_branch
+                git fetch origin
+                git checkout $current_head
+                git merge origin/${user_branch}
+                git merge $current_head origin/$current_head
+                git push origin $current_head
+            else
+                git push origin $user_branch
+            fi
+            src_branch=${user_branch}
+            dst_branch=${branch}
+        else
+            echo "you are not in your own branch"
+            return
+        fi
     fi
 
     origin_url=`git config remote.origin.url`
@@ -97,12 +123,12 @@ function gh () {
     then
         git_ip=`git config remote.origin.url | cut -d "/" -f2,3 | cut -c 2-`
         git_path=`git config remote.origin.url | cut -d "/" -f4,5 | cut -d "." -f 1`
-        url='http://'$git_ip'/'$git_path'/merge_requests/new?merge_request[source_branch]='$user_branch'&merge_request[target_branch]='$branch
+        url='http://'$git_ip'/'$git_path'/merge_requests/new?merge_request[source_branch]='$src_branch'&merge_request[target_branch]='$dst_branch
     else
         git_ip=`git config remote.origin.url | grep -e '\([0-9]\+\.\)\{3\}[0-9]\+' -o`
         git_path1=`git config remote.origin.url | sed 's/ssh\:\/\///g' |  rev2 | cut -d "/" -f2 | rev2 | cut -d ":" -f2`
         git_path2=`git config remote.origin.url | sed 's/ssh\:\/\///g' | cut -d ":" -f2 | rev2 | cut -d "/" -f1 | rev2 | cut -d "." -f1`
-        url='http://'$git_ip'/'$git_path1'/'$git_path2'/merge_requests/new?merge_request[source_branch]='$user_branch'&merge_request[target_branch]='$branch
+        url='http://'$git_ip'/'$git_path1'/'$git_path2'/merge_requests/new?merge_request[source_branch]='$src_branch'&merge_request[target_branch]='$dst_branch
     fi
 
     if [[ -x "$(command -v open)" ]]
@@ -284,10 +310,6 @@ function gmergepr() {
     else
         git checkout $merged_head && gl && gdc && git merge - && git push && git checkout - && git push && git checkout $current_head2
     fi
-}
-
-function gsuyansync() {
-    git fetch suyan && git checkout migu && git branch -D develop && git checkout -b develop suyan/develop
 }
 
 function gci() {
