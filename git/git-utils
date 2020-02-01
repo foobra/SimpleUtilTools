@@ -131,14 +131,22 @@ function gh () {
         url='http://'$git_ip'/'$git_path1'/'$git_path2'/merge_requests/new?merge_request[source_branch]='$src_branch'&merge_request[target_branch]='$dst_branch
     fi
 
+    if [[ -x "$(command -v xdg-open)" ]]
+    then
+        xdg-open $url
+        exit 0
+    fi
+
     if [[ -x "$(command -v open)" ]]
     then
         open $url
+        exit 0
     fi
 
     if [[ -x "$(command -v start)" ]]
     then
         start $url
+        exit 0
     fi
 }
 
