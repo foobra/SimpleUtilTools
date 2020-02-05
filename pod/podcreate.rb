@@ -91,7 +91,7 @@ Pod::Spec.new do |s|
                   assert(false && "universalBundle load failed");
               _\#{s.name}Bundle = [NSBundle bundleWithPath:[b2 pathForResource:@\\\"\#{s.name}\\\" ofType:@\\\"bundle\\\"]];
               if (!_\#{s.name}Bundle)
-                \#{s.name}Bundle = b2;
+                _\#{s.name}Bundle = b2;
 #else
               NSBundle *b1 = [NSBundle mainBundle];
               NSBundle *b2 = [NSBundle bundleWithPath:[b1 pathForResource:@\\\"\#{s.name}\\\" ofType:@\\\"bundle\\\"]];
