@@ -14,13 +14,17 @@ PROJECT_FULL_PATH=$3
 
 
 
-SDK_PATH=$HOME/Desktop/ios_frameworks/$SDK_NAME
+#SDK_PATH=$HOME/Desktop/ios_frameworks/$SDK_NAME
+SDK_PATH=$HOME/Desktop/ios_frameworks
+SDK_FULL_PATH=$HOME/Desktop/ios_frameworks/$SDK_NAME
 
-if [ -d "$SDK_PATH" ]; then
-  rm -rf $SDK_PATH
+if [ -d "$SDK_FULL_PATH" ]; then
+  rm -rf $SDK_FULL_PATH
 fi
 
 mkdir -p $SDK_PATH || true
+mkdir -p $SDK_PATH/$SDK_NAME || true
+mkdir -p $SDK_FULL_PATH || true
 
 
 
@@ -69,14 +73,14 @@ fi
 
 lipo -create $ARM_SDK_PATH/$TARGET_NAME \
              $X86_SDK_PATH/$TARGET_NAME \
-             -output $SDK_PATH/$TARGET_NAME
+             -output $SDK_FULL_PATH/$TARGET_NAME
 
-cp -f $SDK_PATH/$TARGET_NAME $X86_SDK_PATH/$TARGET_NAME
-rm -rf $SDK_PATH/$TARGET_NAME
+cp -f $SDK_FULL_PATH/$TARGET_NAME $X86_SDK_PATH/$TARGET_NAME
+rm -rf $SDK_FULL_PATH/$TARGET_NAME
 
 
-mkdir -p $SDK_PATH/universal
-cp -R ${X86_SDK_PATH} $SDK_PATH/universal/
-cp -R ${X86_SDK_PATH}/../*.bundle $SDK_PATH/universal/
-cp -R ${ARM_SDK_PATH}/Info.plist $SDK_PATH/universal/${TARGET_NAME}.framework/Info.plist
+mkdir -p $SDK_FULL_PATH/universal
+cp -R ${X86_SDK_PATH} $SDK_FULL_PATH/universal/
+cp -R ${X86_SDK_PATH}/../*.bundle $SDK_FULL_PATH/universal/
+cp -R ${ARM_SDK_PATH}/Info.plist $SDK_FULL_PATH/universal/${TARGET_NAME}.framework/Info.plist
 
