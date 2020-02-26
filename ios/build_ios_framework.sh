@@ -68,19 +68,19 @@ fi
 # plutil -insert CFBundleSupportedPlatforms.1 -string iPhoneOS $X86_SDK_PATH/Info.plist
 
 if [ -d "${ARM_SDK_PATH}/Modules/${TARGET_NAME}.swiftmodule" ]; then
-   cp -R ${ARM_SDK_PATH}/Modules/${TARGET_NAME}.swiftmodule/* $X86_SDK_PATH/Modules/${TARGET_NAME}.swiftmodule/
+   cp -R ${ARM_SDK_PATH}/Modules/${TARGET_NAME}.swiftmodule/* $ARM_SDK_PATH/Modules/${TARGET_NAME}.swiftmodule/
 fi
 
 lipo -create $ARM_SDK_PATH/$TARGET_NAME \
              $X86_SDK_PATH/$TARGET_NAME \
              -output $SDK_FULL_PATH/$TARGET_NAME
 
-cp -f $SDK_FULL_PATH/$TARGET_NAME $X86_SDK_PATH/$TARGET_NAME
+cp -f $SDK_FULL_PATH/$TARGET_NAME $ARM_SDK_PATH/$TARGET_NAME
 rm -rf $SDK_FULL_PATH/$TARGET_NAME
 
 
 mkdir -p $SDK_FULL_PATH/universal
-cp -R ${X86_SDK_PATH} $SDK_FULL_PATH/universal/
-cp -R ${X86_SDK_PATH}/../*.bundle $SDK_FULL_PATH/universal/
+cp -R ${ARM_SDK_PATH} $SDK_FULL_PATH/universal/
+cp -R ${ARM_SDK_PATH}/../*.bundle $SDK_FULL_PATH/universal/
 cp -R ${ARM_SDK_PATH}/Info.plist $SDK_FULL_PATH/universal/${TARGET_NAME}.framework/Info.plist
 
