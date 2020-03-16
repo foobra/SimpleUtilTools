@@ -134,19 +134,19 @@ function gh () {
     if [[ -x "$(command -v xdg-open)" ]]
     then
         xdg-open $url
-        exit 0
+        return 0
     fi
 
     if [[ -x "$(command -v open)" ]]
     then
         open $url
-        exit 0
+        return 0
     fi
 
     if [[ -x "$(command -v start)" ]]
     then
         start $url
-        exit 0
+        return 0
     fi
 }
 
