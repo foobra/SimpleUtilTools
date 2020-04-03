@@ -30,7 +30,18 @@ mkdir -p $SDK_FULL_PATH || true
 
 
 xcodebuild build -project $PROJECT_FULL_PATH -scheme $SDK_NAME -configuration $CONF -sdk iphonesimulator -arch x86_64 BUILD_DIR=${SDK_PATH}
+
+if [ $? -ne 0 ]; then
+    echo "compile failed"
+    exit 1
+fi
+
 xcodebuild build -project $PROJECT_FULL_PATH -scheme $SDK_NAME -configuration $CONF -sdk iphoneos -arch armv7 -arch arm64 BUILD_DIR=${SDK_PATH}
+
+if [ $? -ne 0 ]; then
+    echo "compile failed"
+    exit 1
+fi
 
 
 
