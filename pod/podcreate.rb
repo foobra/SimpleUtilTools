@@ -86,7 +86,9 @@ Pod::Spec.new do |s|
 #define STRINGIFY(x) #x
 #define TOSTRING(x) STRINGIFY(x)
               NSBundle *b1 = [NSBundle mainBundle];
-              NSBundle *b2 = [NSBundle bundleWithPath:[b1 pathForResource:@TOSTRING(POD_PACKAGE_UNIVERSAL_BUNDLE) ofType:@"bundle"]];
+              NSBundle *b2 = [NSBundle bundleWithPath:[b1 pathForResource:@\\\"\#{s.name}\\\" ofType:@\\\"bundle\\\"]];
+              if (!b2)
+                b2 = [NSBundle bundleWithPath:[b1 pathForResource:@TOSTRING(POD_PACKAGE_UNIVERSAL_BUNDLE) ofType:@"bundle"]];
               if (!b2)
                   assert(false && "universalBundle load failed");
               _\#{s.name}Bundle = [NSBundle bundleWithPath:[b2 pathForResource:@\\\"\#{s.name}\\\" ofType:@\\\"bundle\\\"]];
