@@ -180,6 +180,7 @@ function gnb () {
     user=`git config --get user.name`
     user_branch="${user}_$default_branch"
 
+    git remote prune origin
     git fetch origin
     git fetch --tags
 
