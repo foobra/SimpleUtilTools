@@ -9,6 +9,7 @@ function podconflict () {
         if [[ "$result" != "" ]];then
             echo "Podfile conflict, please resolve it first and then execute pod add Podfile"
         else
+            git checkout Pods/Manifest.lock --ours
             git checkout Pod* --ours
             pod install
             git add Pod*
