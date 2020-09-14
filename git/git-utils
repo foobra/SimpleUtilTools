@@ -359,7 +359,19 @@ function gci() {
 
 
 function setup_git_pre_commit_hooks() {
-    mkdir -p .git/hooks
+    if [[ -f .init-version ]]; then
+        NEW_VERSION=`cat .init-version`
+        OLD_VERSION=`cat .init-local-version`
+
+        if [[ "$NEW_VERSION" != "$OLD_VERSION" ]];then
+            sh init.sh
+            echo "Re execute init.sh succeed!"
+            echo $NEW_VERSION > .init-local-version
+        fi
+    fi
+
+
+    mkdir -p .git/hooks || true
     if [[ ! -f .git/hooks/pre-commit && -f scripts/pre-commit/pre-commit.sh ]]; then
         echo "Copy Pre-Commit to hooks"
     fi
