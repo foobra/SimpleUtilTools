@@ -15,6 +15,12 @@ function gl () {
         fi
     done
     setup_git_pre_commit_hooks
+    if [ -e .gitmodules ]
+    then
+        git submodule update --init --recursive
+        git submodule foreach --recursive git checkout master
+        git submodule foreach --recursive git pull
+    fi
     if [ -n "$1" ]; then
         head=`cat .git/HEAD`
         current_head=`echo $head | cut -b 17-`
