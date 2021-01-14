@@ -92,6 +92,6 @@ rm -rf $SDK_FULL_PATH/$TARGET_NAME
 
 mkdir -p $SDK_FULL_PATH/universal
 cp -R ${ARM_SDK_PATH} $SDK_FULL_PATH/universal/
-cp -R ${ARM_SDK_PATH}/../*.bundle $SDK_FULL_PATH/universal/
+cp -R ${ARM_SDK_PATH}/../*.bundle $SDK_FULL_PATH/universal/ || true
 cp -R ${ARM_SDK_PATH}/Info.plist $SDK_FULL_PATH/universal/${TARGET_NAME}.framework/Info.plist
 
