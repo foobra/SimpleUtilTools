@@ -46,7 +46,9 @@ fi
 
 
 ARM_SDK_PATH=""
+ARM_SDK_DSYM_PATH=""
 X86_SDK_PATH=""
+X86_SDK_DSYM_PATH=""
 
 
 if [ -d "${SDK_PATH}/${CONF}-iphoneos/${SDK_NAME}" ]; then
@@ -58,14 +60,18 @@ fi
 
 if [ -d "${SDK_PATH}/${CONF}-iphoneos/${SDK_NAME}/${TARGET_NAME}.framework" ]; then
    ARM_SDK_PATH=${SDK_PATH}/${CONF}-iphoneos/${SDK_NAME}/${TARGET_NAME}.framework
+   ARM_SDK_DSYM_PATH=${SDK_PATH}/${CONF}-iphoneos/${SDK_NAME}/${TARGET_NAME}.framework.dSYM
 else
    ARM_SDK_PATH=${SDK_PATH}/${CONF}-iphoneos/${TARGET_NAME}.framework
+   ARM_SDK_DSYM_PATH=${SDK_PATH}/${CONF}-iphoneos/${TARGET_NAME}.framework.dSYM
 fi
 
 if [ -d "${SDK_PATH}/${CONF}-iphonesimulator/${SDK_NAME}/${TARGET_NAME}.framework" ]; then
    X86_SDK_PATH=${SDK_PATH}/${CONF}-iphonesimulator/${SDK_NAME}/${TARGET_NAME}.framework
+   X86_SDK_DSYM_PATH=${SDK_PATH}/${CONF}-iphonesimulator/${SDK_NAME}/${TARGET_NAME}.framework.dSYM
 else
    X86_SDK_PATH=${SDK_PATH}/${CONF}-iphonesimulator/${TARGET_NAME}.framework
+   X86_SDK_DSYM_PATH=${SDK_PATH}/${CONF}-iphonesimulator/${TARGET_NAME}.framework.dSYM
 fi
 
 
@@ -89,9 +95,14 @@ lipo -create $ARM_SDK_PATH/$TARGET_NAME \
 cp -f $SDK_FULL_PATH/$TARGET_NAME $ARM_SDK_PATH/$TARGET_NAME
 rm -rf $SDK_FULL_PATH/$TARGET_NAME
 
-
 mkdir -p $SDK_FULL_PATH/universal
 cp -R ${ARM_SDK_PATH} $SDK_FULL_PATH/universal/
 cp -R ${ARM_SDK_PATH}/../*.bundle $SDK_FULL_PATH/universal/ || true
 cp -R ${ARM_SDK_PATH}/Info.plist $SDK_FULL_PATH/universal/${TARGET_NAME}.framework/Info.plist
 
+if [[ -d "${ARM_SDK_DSYM_PATH}" && -d "${X86_SDK_DSYM_PATH}" ]]; then
+   cp -a ${ARM_SDK_DSYM_PATH} $SDK_FULL_PATH/universal
+   lipo -create ${ARM_SDK_DSYM_PATH}/Contents/Resources/DWARF/${TARGET_NAME}\
+                ${X86_SDK_DSYM_PATH}/Contents/Resources/DWARF/${TARGET_NAME}\
+               -output ${SDK_FULL_PATH}/universal/${TARGET_NAME}.framework.dSYM/Contents/Resources/DWARF/${TARGET_NAME}
+fi
