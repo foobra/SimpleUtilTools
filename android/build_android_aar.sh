@@ -31,9 +31,14 @@ mkdir -p $SDK_PATH/aar/
 
 
 cd $PROJECT_FULL_PATH
-rm -rf $MODULE_FULL_PATH/$SDK_NAME/build/ || true
 chmod +x gradlew
-./gradlew :$SDK_NAME:clean && ./gradlew :$SDK_NAME:assemble${CONF}
+
+if [[ "$2" == "Debug"  || "$2" == "debug" ]] ;then
+  rm -rf $MODULE_FULL_PATH/$SDK_NAME/build/ || true
+  ./gradlew :$SDK_NAME:clean && ./gradlew :$SDK_NAME:assemble${CONF}
+else
+  ./gradlew :$SDK_NAME:assemble${CONF}
+fi
 
 cp -f $MODULE_FULL_PATH/$SDK_NAME/build/outputs/aar/*.aar $SDK_PATH/aar/
 
