@@ -15,12 +15,12 @@ function gl () {
         fi
     done
     setup_git_pre_commit_hooks
-    if [ -e .gitmodules ]
-    then
-        git submodule update --init --recursive
-        git submodule foreach --recursive git checkout master
-        git submodule foreach --recursive git pull
-    fi
+    # if [ -e .gitmodules ]
+    # then
+    #     git submodule update --init --recursive
+    #     git submodule foreach --recursive git checkout master
+    #     git submodule foreach --recursive git pull
+    # fi
     if [ -n "$1" ]; then
         head=`cat .git/HEAD`
         current_head=`echo $head | cut -b 17-`
@@ -33,7 +33,7 @@ function gl () {
         if [[ $current_head = *_* ]]
         then
             branch=${current_head%%+*}
-            branch=${branch##*_}
+            branch=${branch#*_}
             user_branch="${user}_${branch}"
             git fetch origin
             git merge $user_branch origin/$user_branch
@@ -97,7 +97,7 @@ function gh () {
         if [[ $current_head = *_* ]]
         then
             branch=${current_head%%+*}
-            branch=${branch##*_}
+            branch=${branch#*_}
             user_branch="${user}_${branch}"
             git fetch origin
             git merge $user_branch origin/$user_branch
@@ -157,20 +157,23 @@ function gh () {
 }
 
 function gnb () {
-    pkill Xcode
+    pkill Xcode || true
     default_branch=''
+
     if [ -z "$1" ]; then
         echo "Usage: gnb branchName"
         return
-    else
-        echo
-    if [[ $1 == *_* ]]; then
-        echo "Usage: defaultBranch name should not include _"
-        return
-      else
-        default_branch=$1
-      fi
     fi
+
+    default_branch=$1
+
+    # if [[ $1 == *_* ]]; then
+    #     echo "Usage: defaultBranch name should not include _"
+    #     # return
+    #   else
+    #     default_branch=$1
+    #   fi
+    # fi
 
    now_pwd=`pwd`
    while [[ ! -d ".git" ]]; do
