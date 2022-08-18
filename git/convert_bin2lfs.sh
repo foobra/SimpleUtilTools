@@ -34,7 +34,7 @@ function is_text() {
     ;;
   "application")
     case "$SUB_TYPE" in
-    "json"|"csv")
+    "json"|"csv"|"xml"|"xhtml+xml"|"x-sh")
       return 0
       ;;
     esac
@@ -51,18 +51,31 @@ function is_text() {
 }
 
 
-FILES=`find . -type f -not -path "./.git/*"`
+FILES=()
+declare -a BIN_FILES
+BIN_FILES=("")
+
+if [ -z "$1" ]; then
+  FILES=`git ls-files`
+else
+  FILES=`git ls-files | grep $1`
+fi
+
 
 for FILE in $FILES  
 do
-    non_text_file=`find_wrong_files "${FILE}"`
-    if [[ ! -z $non_text_file ]]; then
-      REAL_FILE=`git check-ignore $FILE`
-      if [ -z "$REAL_FILE" ]; then
-          TRACKED=`git check-attr --all -- $FILE | grep "filter: lfs"`
-          if [ -z "$TRACKED" ];then
-              git lfs track $FILE
-          fi
-      fi
-    fi
+  non_text_file=`find_wrong_files "${FILE}"`
+  if [[ ! -z $non_text_file ]]; then
+    BIN_FILES=("${BIN_FILES[@]}" $non_text_file)
+  fi
+done  
+
+
+
+for FILE in ${BIN_FILES[@]}
+do
+  TRACKED=`git check-attr --all -- $FILE | grep "filter: lfs"`
+  if [ -z "$TRACKED" ];then
+    git lfs track $FILE
+  fi
 done  
