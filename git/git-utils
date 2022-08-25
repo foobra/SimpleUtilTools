@@ -21,6 +21,12 @@ function gl () {
     #     git submodule foreach --recursive git checkout master
     #     git submodule foreach --recursive git pull
     # fi
+
+    if [[ -n `git status -s` ]]; then
+        echo "git status not clean, please commit first"
+        return
+    fi
+
     if [ -n "$1" ]; then
         head=`cat .git/HEAD`
         current_head=`echo $head | cut -b 17-`
@@ -81,6 +87,13 @@ function gh () {
     done
 
     setup_git_pre_commit_hooks
+
+
+    if [[ -n `git status -s` ]]; then
+        echo "git status not clean, please commit first"
+        return
+    fi
+    
     src_branch=""
     dst_branch=""
     if [ -n "$1" ]; then
