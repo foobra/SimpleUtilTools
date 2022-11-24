@@ -1,0 +1,18 @@
+openapi: 3.0.3
+info:
+  title: AutoUEJsonGenerate
+  contact:
+    email: gaoshan_yy@migu.cn
+  version:
+    1.0.0
+paths:
+  /stub:
+    get:
+      summary: Stub
+      description: ''
+      parameters: []
+      responses:
+        default:
+          description: ''
+components:
+  schemas:
