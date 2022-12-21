@@ -46,20 +46,25 @@ for i in *.h; do
     -c ":%s/ \*\/\nclass/ \*\/\rUCLASS\(BlueprintType\)\rclass" \
     -c ":%s/namespace/#include \"$FILE_NAME.generated.h\"\r\rnamespace" \
     -c ":%s/namespace *\n{//g" \
-    -c ":%s/double /float /g" \
-    -c ":%s/TOptional<double>/TOptional<float> /g" \
+    -c ":%s/double/float/g" \
     -c ":%s/OpenAPIBaseModel\.h/OpenAPIHelpers.h" \
-    -c ":%s/\([^\"]\)OpenAPI/\1UOpenAPI/g" \
     "+wq" "$FULL_PATH"
 
+    vi \
+    -c ":%s/\([^\"]\)OpenAPI\(\w\+\)/\1UOpenAPI\2*/g" \
+    -c ":%s/\* : public UJsonModelUE/ : public UJsonModelUE/g" \
+    -c ":%s/\/UOpenAPITools\*\//\/OpenAPITools\//g" \
+    -c ":%s/\~\(\w\+\)\*() {}/\~\1() {}/g" \
+    "+wq" "$FULL_PATH"
 
 
     vi \
     -c ":%s/public:/GENERATED_BODY\(\)\r\rpublic:" \
-    -c ":%s/^\( \+[a-zA-Z0-9_<>]\+ \w\+;\)$/    UPROPERTY\(EditAnywhere, BlueprintReadWrite\)\r\1/g" \
+    -c ":%s/^\( \+[a-zA-Z0-9_<>\*]\+ \w\+;\)$/\r    UPROPERTY\(EditAnywhere, BlueprintReadWrite\)\r\1/g" \
+    -c ":%s/^\( \+[a-zA-Z0-9_<>\*]\+ \w\+ = \w\+;\)$/\r    UPROPERTY\(EditAnywhere, BlueprintReadWrite\)\r\1/g" \
     -c ":%s/UPROPERTY(EditAnywhere, BlueprintReadWrite) *\n \+TOptional/TOptional/g" \
     -c ":%s/UPROPERTY(EditAnywhere, BlueprintReadWrite) *\n \+TSharedPtr/TSharedPtr/g" \
-    -c ":%s/TOptional<\(.*\)> \+\(.*\);/TOptional<\1> \2;\r    UFUNCTION(BlueprintCallable)\r\/\/ clang-format off\r    \1 GetOptional\2(bool \&ret) { if (\2.IsSet()) { ret = true; return \2.GetValue(); } else { ret = false; return \1{}; } };\r\/\/ clang-format on/g" \
+    -c ":%s/TOptional<\(.*\)> \+\(.*\);/TOptional<\1> \2;\r    UFUNCTION(BlueprintCallable)\r \r    \1 GetOptional\2(bool \&ret) \r    {\r      return GetOptionalValue(ret, \2);\r    };\r /g" \
     -c ":%s/ \+UFUNCTION(BlueprintCallable)\n\/\/ clang-format off\n \+TSharedPtr<FJsonObject>.*$/\/\/ clang-format off/g" \
     -c ":%s/ \+UFUNCTION(BlueprintCallable)\n\/\/ clang-format off\n \+TSharedPtr<FJsonValue>.*$/\/\/ clang-format off/g" \
     "+wq" "$FULL_PATH"
@@ -86,6 +91,7 @@ for i in *.cpp; do
     -c ":%s/#include \"$3Module.h\"/" \
     -c ":%s/namespace *\n{//g" \
     -c ":%s/\([^\"]\)OpenAPI/\1UOpenAPI/g" \
+    -c ":%s/&= TryGetJsonValue\(.*\));$/\&= TryGetJsonValue\1, this);/g" \
     "+wq" "$FULL_PATH"
 
     sed "${sedi[@]}" '$ d' "$FULL_PATH"

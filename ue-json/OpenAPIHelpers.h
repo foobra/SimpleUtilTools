@@ -12,11 +12,12 @@
 
 #pragma once
 
-
 #include "Misc/Base64.h"
 #include "PlatformHttp.h"
 
 #include "JsonModelUE.h"
+
+//////////////////////////////////////////////////////////////////////////
 
 
 
@@ -208,6 +209,18 @@ inline void WriteJsonValue(JsonWriter& Writer, UJsonModelUE* Value)
 	Value->WriteJson(Writer);
 }
 
+
+
+// custom add
+template<typename T, typename std::enable_if<std::is_base_of<UJsonModelUE, T>::value, int>::type = 0>
+inline void WriteJsonValue(JsonWriter& Writer,  T* Value)
+{
+	UJsonModelUE* ValeBase = Cast<UJsonModelUE>(Value);
+	(* ValeBase).WriteJson(Writer);
+}
+
+
+
 template<typename T, typename std::enable_if<!std::is_base_of<UJsonModelUE, T>::value, int>::type = 0>
 inline void WriteJsonValue(JsonWriter& Writer, const T& Value)
 {
@@ -225,6 +238,27 @@ inline void WriteJsonValue(JsonWriter& Writer, const TArray<T>& Value)
 	Writer->WriteArrayEnd();
 }
 
+
+// custom add
+template<typename T>
+inline void WriteJsonValue(JsonWriter& Writer, const TArray<T*>& Value)
+{
+	Writer->WriteArrayStart();
+	for (const auto& Element : Value)
+	{
+		WriteJsonValue(Writer, Element);
+	}
+	Writer->WriteArrayEnd();
+}
+
+
+
+
+
+
+
+
+
 template<typename T>
 inline void WriteJsonValue(JsonWriter& Writer, const TMap<FString, T>& Value)
 {
@@ -239,7 +273,7 @@ inline void WriteJsonValue(JsonWriter& Writer, const TMap<FString, T>& Value)
 
 //////////////////////////////////////////////////////////////////////////
 
-inline bool TryGetJsonValue(const TSharedPtr<FJsonValue>& JsonValue, FString& Value)
+inline bool TryGetJsonValue(const TSharedPtr<FJsonValue>& JsonValue, FString& Value, UObject* InJsonModelUEBase=nullptr)
 {
 	FString TmpValue;
 	if (JsonValue->TryGetString(TmpValue))
@@ -251,7 +285,7 @@ inline bool TryGetJsonValue(const TSharedPtr<FJsonValue>& JsonValue, FString& Va
 		return false;
 }
 
-inline bool ParseDateTime(const FString& DateTimeString, FDateTime& OutDateTime)
+inline bool ParseDateTime(const FString& DateTimeString, FDateTime& OutDateTime, UObject* InJsonModelUEBase = nullptr)
 {
 	// Iso8601 Format: 	DateTime: YYYY-mm-ddTHH:MM:SS(.sss)(Z|+hh:mm|+hhmm|-hh:mm|-hhmm)
 	{
@@ -288,7 +322,7 @@ inline bool ParseDateTime(const FString& DateTimeString, FDateTime& OutDateTime)
 
 }
 
-inline bool TryGetJsonValue(const TSharedPtr<FJsonValue>& JsonValue, FDateTime& Value)
+inline bool TryGetJsonValue(const TSharedPtr<FJsonValue>& JsonValue, FDateTime& Value, UObject* InJsonModelUEBase=nullptr)
 {
 	FString TmpValue;
 	if (JsonValue->TryGetString(TmpValue))
@@ -299,7 +333,7 @@ inline bool TryGetJsonValue(const TSharedPtr<FJsonValue>& JsonValue, FDateTime& 
 		return false;
 }
 
-inline bool TryGetJsonValue(const TSharedPtr<FJsonValue>& JsonValue, FGuid& Value)
+inline bool TryGetJsonValue(const TSharedPtr<FJsonValue>& JsonValue, FGuid& Value, UObject* InJsonModelUEBase = nullptr)
 {
 	FString TmpValue;
 	if (JsonValue->TryGetString(TmpValue))
@@ -310,7 +344,7 @@ inline bool TryGetJsonValue(const TSharedPtr<FJsonValue>& JsonValue, FGuid& Valu
 		return false;
 }
 
-inline bool TryGetJsonValue(const TSharedPtr<FJsonValue>& JsonValue, bool& Value)
+inline bool TryGetJsonValue(const TSharedPtr<FJsonValue>& JsonValue, bool& Value, UObject* InJsonModelUEBase = nullptr)
 {
 	bool TmpValue;
 	if (JsonValue->TryGetBool(TmpValue))
@@ -322,13 +356,13 @@ inline bool TryGetJsonValue(const TSharedPtr<FJsonValue>& JsonValue, bool& Value
 		return false;
 }
 
-inline bool TryGetJsonValue(const TSharedPtr<FJsonValue>& JsonValue, TSharedPtr<FJsonValue>& JsonObjectValue)
+inline bool TryGetJsonValue(const TSharedPtr<FJsonValue>& JsonValue, TSharedPtr<FJsonValue>& JsonObjectValue, UObject* InJsonModelUEBase = nullptr)
 {
 	JsonObjectValue = JsonValue;
 	return true;
 }
 
-inline bool TryGetJsonValue(const TSharedPtr<FJsonValue>& JsonValue, TSharedPtr<FJsonObject>& JsonObjectValue)
+inline bool TryGetJsonValue(const TSharedPtr<FJsonValue>& JsonValue, TSharedPtr<FJsonObject>& JsonObjectValue, UObject* InJsonModelUEBase = nullptr)
 {
 	const TSharedPtr<FJsonObject>* Object;
 	if (JsonValue->TryGetObject(Object))
@@ -339,7 +373,7 @@ inline bool TryGetJsonValue(const TSharedPtr<FJsonValue>& JsonValue, TSharedPtr<
 	return false;
 }
 
-inline bool TryGetJsonValue(const TSharedPtr<FJsonValue>& JsonValue, TArray<uint8>& Value)
+inline bool TryGetJsonValue(const TSharedPtr<FJsonValue>& JsonValue, TArray<uint8>& Value, UObject* InJsonModelUEBase = nullptr)
 {
 	FString TmpValue;
 	if (JsonValue->TryGetString(TmpValue))
@@ -351,13 +385,28 @@ inline bool TryGetJsonValue(const TSharedPtr<FJsonValue>& JsonValue, TArray<uint
 		return false;
 }
 
-inline bool TryGetJsonValue(const TSharedPtr<FJsonValue>& JsonValue, UJsonModelUE* Value)
+inline bool TryGetJsonValue(const TSharedPtr<FJsonValue>& JsonValue, UJsonModelUE& Value, UObject* InJsonModelUEBase = nullptr)
 {
+	return Value.FromJson(JsonValue);
+}
+
+// custom add
+template<typename T, typename std::enable_if<std::is_base_of<UJsonModelUE, T>::value, int>::type = 0>
+inline bool TryGetJsonValue(const TSharedPtr<FJsonValue>& JsonValue, T*& Value, UObject* InJsonModelUEBase = nullptr)
+{
+	Value = NewObject<T>();
+	if (UJsonModelUE* JsonModelUEBase = Cast<UJsonModelUE>(InJsonModelUEBase))
+	{
+		JsonModelUEBase->PreventGCArray.AddUnique(Value);
+	}
 	return Value->FromJson(JsonValue);
 }
 
+
+
+
 template<typename T, typename std::enable_if<!std::is_base_of<UJsonModelUE, T>::value, int>::type = 0>
-inline bool TryGetJsonValue(const TSharedPtr<FJsonValue>& JsonValue, T& Value)
+inline bool TryGetJsonValue(const TSharedPtr<FJsonValue>& JsonValue, T& Value, UObject* InJsonModelUEBase = nullptr)
 {
 	T TmpValue;
 	if (JsonValue->TryGetNumber(TmpValue))
@@ -370,7 +419,7 @@ inline bool TryGetJsonValue(const TSharedPtr<FJsonValue>& JsonValue, T& Value)
 }
 
 template<typename T>
-inline bool TryGetJsonValue(const TSharedPtr<FJsonValue>& JsonValue, TArray<T>& ArrayValue)
+inline bool TryGetJsonValue(const TSharedPtr<FJsonValue>& JsonValue, TArray<T>& ArrayValue, UObject* InJsonModelUEBase = nullptr)
 {
 	const TArray<TSharedPtr<FJsonValue>>* JsonArray;
 	if (JsonValue->TryGetArray(JsonArray))
@@ -381,7 +430,7 @@ inline bool TryGetJsonValue(const TSharedPtr<FJsonValue>& JsonValue, TArray<T>& 
 		for (int i = 0; i < Count; i++)
 		{
 			T TmpValue;
-			ParseSuccess &= TryGetJsonValue((*JsonArray)[i], TmpValue);
+			ParseSuccess &= TryGetJsonValue((*JsonArray)[i], TmpValue, InJsonModelUEBase);
 			ArrayValue.Emplace(MoveTemp(TmpValue));
 		}
 		return ParseSuccess;
@@ -389,8 +438,38 @@ inline bool TryGetJsonValue(const TSharedPtr<FJsonValue>& JsonValue, TArray<T>& 
 	return false;
 }
 
+// custom add
 template<typename T>
-inline bool TryGetJsonValue(const TSharedPtr<FJsonValue>& JsonValue, TMap<FString, T>& MapValue)
+inline bool TryGetJsonValue(const TSharedPtr<FJsonValue>& JsonValue, TArray<T*>& ArrayValue, UObject* InJsonModelUEBase=nullptr)
+{
+	const TArray<TSharedPtr<FJsonValue>>* JsonArray;
+	if (JsonValue->TryGetArray(JsonArray))
+	{
+		bool ParseSuccess = true;
+		const int32 Count = JsonArray->Num();
+		ArrayValue.Reset(Count);
+		for (int i = 0; i < Count; i++)
+		{
+			T* TmpValue = NewObject<T>();
+			if (UJsonModelUE* JsonModelUEBase = Cast<UJsonModelUE>(InJsonModelUEBase))
+			{
+				JsonModelUEBase->PreventGCArray.AddUnique(TmpValue);
+			}
+			ParseSuccess &= TryGetJsonValue((*JsonArray)[i], *TmpValue, InJsonModelUEBase);
+			ArrayValue.Add(TmpValue);
+		}
+		return ParseSuccess;
+	}
+	return false;
+}
+
+
+
+
+
+
+template<typename T>
+inline bool TryGetJsonValue(const TSharedPtr<FJsonValue>& JsonValue, TMap<FString, T>& MapValue, UObject* InJsonModelUEBase = nullptr)
 {
 	const TSharedPtr<FJsonObject>* Object;
 	if (JsonValue->TryGetObject(Object))
@@ -400,7 +479,7 @@ inline bool TryGetJsonValue(const TSharedPtr<FJsonValue>& JsonValue, TMap<FStrin
 		for (const auto& It : (*Object)->Values)
 		{
 			T TmpValue;
-			ParseSuccess &= TryGetJsonValue(It.Value, TmpValue);
+			ParseSuccess &= TryGetJsonValue(It.Value, TmpValue, InJsonModelUEBase);
 			MapValue.Emplace(It.Key, MoveTemp(TmpValue));
 		}
 		return ParseSuccess;
@@ -409,23 +488,28 @@ inline bool TryGetJsonValue(const TSharedPtr<FJsonValue>& JsonValue, TMap<FStrin
 }
 
 template<typename T>
-inline bool TryGetJsonValue(const TSharedPtr<FJsonObject>& JsonObject, const FString& Key, T& Value)
+inline bool TryGetJsonValue(const TSharedPtr<FJsonObject>& JsonObject, const FString& Key, T& Value, UObject* InJsonModelUEBase = nullptr)
 {
 	const TSharedPtr<FJsonValue> JsonValue = JsonObject->TryGetField(Key);
 	if (JsonValue.IsValid() && !JsonValue->IsNull())
 	{
-		return TryGetJsonValue(JsonValue, Value);
+		return TryGetJsonValue(JsonValue, Value, InJsonModelUEBase);
 	}
 	return false;
 }
 
+
+
+
+
+
 template<typename T>
-inline bool TryGetJsonValue(const TSharedPtr<FJsonObject>& JsonObject, const FString& Key, TOptional<T>& OptionalValue)
+inline bool TryGetJsonValue(const TSharedPtr<FJsonObject>& JsonObject, const FString& Key, TOptional<T>& OptionalValue, UObject* InJsonModelUEBase = nullptr)
 {
 	if(JsonObject->HasField(Key))
 	{
 		T Value;
-		if (TryGetJsonValue(JsonObject, Key, Value))
+		if (TryGetJsonValue(JsonObject, Key, Value, InJsonModelUEBase))
 		{
 			OptionalValue = Value;
 			return true;
@@ -434,4 +518,154 @@ inline bool TryGetJsonValue(const TSharedPtr<FJsonObject>& JsonObject, const FSt
 			return false;
 	}
 	return true; // Absence of optional value is not a parsing error
+}
+
+// custom add
+template<typename T>
+inline bool TryGetJsonValue(const TSharedPtr<FJsonObject>& JsonObject, const FString& Key, TOptional<T*>& OptionalValue,  UObject* InJsonModelUEBase= nullptr)
+{
+	if (JsonObject->HasField(Key))
+	{
+
+		T* Value = NewObject<T>();
+
+		if (TryGetJsonValue(JsonObject, Key, *Value, InJsonModelUEBase))
+		{
+			if (UJsonModelUE* JsonModelUEBase = Cast<UJsonModelUE>(InJsonModelUEBase))
+			{
+				JsonModelUEBase->PreventGCArray.AddUnique(Value);
+			}
+
+			OptionalValue = Value;
+			return true;
+		}
+		else
+			return false;
+	}
+	return true; // Absence of optional value is not a parsing error
+}
+
+//////////////////////////////////////////
+
+
+
+template<typename T>
+inline T GetOptionalValue(bool& ret, TOptional<T>& InOptionVar)
+{
+	if (InOptionVar.IsSet())
+	{
+		ret = true;
+		return InOptionVar.GetValue();
+
+	}
+	else
+	{
+		ret = false;
+		return T{};
+	}
+}
+
+template<typename T, typename std::enable_if<std::is_base_of<UJsonModelUE, T>::value, int>::type = 0>
+inline T* GetOptionalValue(bool& ret, TOptional<T*>& InOptionVar)
+{
+	if (InOptionVar.IsSet())
+	{
+		ret = true;
+		return InOptionVar.GetValue();
+
+	}
+	else
+	{
+		ret = false;
+		return nullptr;
+	}
+}
+
+
+
+template<typename T>
+inline TArray<T> GetOptionalValue(bool& ret, TOptional<TArray<T>>& InOptionVar)
+{
+	if (InOptionVar.IsSet())
+	{
+		ret = true;
+		return InOptionVar.GetValue();
+
+	}
+	else
+	{
+		ret = false;
+		return TArray<T>{};
+	}
+
+
+}
+
+template<typename T, typename std::enable_if<std::is_base_of<UJsonModelUE, T>::value, int>::type = 0>
+inline TArray<T*> GetOptionalValue(bool& ret, TOptional<TArray<T*>>& InOptionVar)
+{
+	if (InOptionVar.IsSet())
+	{
+		ret = true;
+		return InOptionVar.GetValue();
+
+	}
+	else
+	{
+		ret = false;
+		return TArray<T*>{};
+	}
+
+
+}
+
+// custom add
+template<typename T, typename FRTBStructbase ,typename std::enable_if<std::is_base_of<UJsonModelUE, T>::value, int>::type = 0>
+inline TMap<int32, FRTBStructbase> GetOptionalValue(TArray<TArray<T*>>& InOptionVar, TMap<int32, FRTBStructbase> InRetTMap)
+{
+
+	TMap<int32, FRTBStructbase> TMapArray;
+
+	for (int i = 0; i < InOptionVar.Num(); ++i)
+	{
+		FRTBStructbase RTBStruct;
+		for (int j = 0; j < InOptionVar[i].Num(); ++j)
+		{
+			RTBStruct.UObjectPrtArray.Add(InOptionVar[i][j]);
+		}
+
+		TMapArray.Add(i, RTBStruct);
+
+	}
+
+	return TMapArray;
+
+}
+
+// custom add
+template<typename T, typename U, typename std::enable_if<std::is_base_of<UJsonModelUE, T>::value, int>::type = 0>
+inline TMap<int32, U> GetOptionalValue(bool& ret, TOptional < TArray<TArray<T*>>>& InOptionVar, TMap<int32, U> InRetTMap)
+{
+	TMap<int32, U> TMapArray;
+
+	if (InOptionVar.IsSet())
+	{
+		ret = true;
+		for (int i = 0; i < InOptionVar.GetValue().Num(); ++i)
+		{
+			U RTBStruct;
+			for (int j = 0; j < InOptionVar.GetValue()[i].Num(); ++j)
+			{
+				RTBStruct.UObjectPrtArray.Add(InOptionVar.GetValue()[i][j]);
+			}
+			TMapArray.Add(i, RTBStruct);
+
+		}
+		return TMapArray;
+	}
+	else
+	{
+		ret = false;
+		return TMap<int32, U>{};
+	}
 }
