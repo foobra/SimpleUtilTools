@@ -4,7 +4,7 @@
 # $1 : git pull $1 branch ->current_branch
 function gl () {
     now_pwd=`pwd`
-    while [[ ! -d ".git" ]]
+    while [[ ! -d ".git" && ! -f ".git" ]]
     do
         cd ..
         if [[ `pwd` = '/' ]]
@@ -75,7 +75,7 @@ function rev2() {
 # $1 : git push current branch and create merge request current branch to $1 branch
 function gh () {
     now_pwd=`pwd`
-    while [[ ! -d ".git" ]]
+    while [[ ! -d ".git" && ! -f ".git" ]]
     do
         cd ..
         if [[ `pwd` = '/' ]]
@@ -189,7 +189,7 @@ function gnb () {
     # fi
 
    now_pwd=`pwd`
-   while [[ ! -d ".git" ]]; do
+    while [[ ! -d ".git" && ! -f ".git" ]]; do
     cd ..
     if [[ `pwd` = '/' ]]; then
         echo 'Here is Root, Damn! Let us go back, biu~~'
@@ -241,7 +241,7 @@ function gnb () {
 
 function gcd () {
     now_pwd=`pwd`
-    while [[ ! -d ".git" ]]
+    while [[ ! -d ".git" && ! -f ".git" ]]
     do
         cd ..
         if [[ `pwd` = '/' ]]
@@ -271,7 +271,7 @@ function gcd () {
 
 function gdc() {
     now_pwd=`pwd`
-    while [[ ! -d ".git" ]];do
+    while [[ ! -d ".git" && ! -f ".git" ]];do
         cd ..
         if [[ `pwd` == '/' ]]; then
             echo 'Here is Root, Damn! Let us go back, biu~~'
@@ -308,7 +308,7 @@ function gdc() {
 
 function gmergepr() {
     now_pwd=`pwd`
-    while [[ ! -d ".git" ]];do
+    while [[ ! -d ".git" || -f ".git" ]];do
         cd ..
         if [[ `pwd` == '/' ]]; then
             echo 'Here is Root, Damn! Let us go back, biu~~'
