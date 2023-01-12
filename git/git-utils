@@ -393,14 +393,16 @@ function setup_git_pre_commit_hooks() {
     fi
 
 
-    mkdir -p .git/hooks || true
-    if [[ ! -f .git/hooks/pre-commit && -f scripts/pre-commit/pre-commit.sh ]]; then
-        echo "Copy Pre-Commit to hooks"
-    fi
+    if [[ ! -f ".git" ]]; then
+        mkdir -p .git/hooks || true
+        if [[ ! -f .git/hooks/pre-commit && -f scripts/pre-commit/pre-commit.sh ]]; then
+            echo "Copy Pre-Commit to hooks"
+        fi
 
-    if [[ -f scripts/pre-commit/pre-commit.sh ]]; then
-        cp -f scripts/pre-commit/pre-commit.sh .git/hooks/pre-commit
-        chmod +x .git/hooks/pre-commit
+        if [[ -f scripts/pre-commit/pre-commit.sh ]]; then
+            cp -f scripts/pre-commit/pre-commit.sh .git/hooks/pre-commit
+            chmod +x .git/hooks/pre-commit
+        fi
     fi
 }
 
