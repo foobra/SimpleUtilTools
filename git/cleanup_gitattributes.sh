@@ -2,13 +2,16 @@
 
 OLDIFS="$IFS"
 IFS=$'\n'
+SPACE_CHAR="[[:space:]]"
 
 while read line
 do
     file=`echo ${line} | grep -o -e ".* filter=lfs" | grep -o -e "\([^ ]\+\) "`
     file2=`pwd`/${file}
+    file3=$(echo "$file2" | xargs) 
+    file4=${file3//"$SPACE_CHAR"/ }
 
-    if [ -e "$file2" ];then
+    if test -f "$file4"; then
         echo ${line} >> .gitattributes.bak
     fi
 done < .gitattributes
