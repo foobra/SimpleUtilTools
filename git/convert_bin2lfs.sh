@@ -6,7 +6,8 @@ IFS=$'\n'
 
 
 function is_text_git() {
-  ret="$(git merge-file /dev/null /dev/null $1 2>&1)"
+  unescape_path=`eval printf '%s' "$1"`
+  ret=$(git merge-file /dev/null /dev/null "$unescape_path" 2>&1)
   if [ -z "$ret" ]; then
     return 0
   else
