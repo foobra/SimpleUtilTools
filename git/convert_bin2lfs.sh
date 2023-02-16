@@ -5,14 +5,27 @@ OLDIFS="$IFS"
 IFS=$'\n'
 
 
+function is_text_git() {
+  ret="$(git merge-file /dev/null /dev/null $1 2>&1)"
+  if [ -z "$ret" ]; then
+    return 0
+  else
+    return 1
+  fi
+}
+
 
 function find_wrong_files() {
   for FILE in "$@"; do
-    local FILE_TYPE
-    FILE_TYPE=$(file --mime-type "$FILE" | grep -o -e ": .\+$" | cut -b 3-)
-    if ! is_text "$FILE_TYPE"; then
+    if ! is_text_git "$FILE"; then
       echo "$FILE"
     fi
+
+    # local FILE_TYPE
+    # FILE_TYPE=$(file --mime-type "$FILE" | grep -o -e ": .\+$" | cut -b 3-)
+    # if ! is_text "$FILE_TYPE"; then
+    #   echo "$FILE"
+    # fi
   done
 }
 
@@ -34,7 +47,7 @@ function is_text() {
     ;;
   "application")
     case "$SUB_TYPE" in
-    "json"|"csv"|"xml"|"xhtml+xml"|"x-sh")
+    "json"|"csv"|"xml"|"xhtml+xml"|"x-sh"|"x-wine-extension-ini")
       return 0
       ;;
     esac
