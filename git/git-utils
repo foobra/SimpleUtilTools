@@ -349,6 +349,12 @@ function gci() {
     git commit -m "$*"
 }
 
+function gca() {
+    git add .
+    git add -u
+    git commit --amend
+}
+
 # function gvpn() {
 #     origin_url=`git config remote.origin.url`
 #     if [[ $origin_url =~ "http" ]]
