@@ -16,9 +16,24 @@ def extract_namespace_and_structs(header_content):
 
     return namespace, structs
 
-# Function to generate RspFwd.hpp content
+# Function to determine required includes based on struct definitions
+def determine_includes(struct_definitions):
+    includes = set()
+    if any(re.search(r'\bstd::optional\b', struct) for struct in struct_definitions):
+        includes.add("#include <optional>")
+    if any(re.search(r'\bstd::string\b', struct) for struct in struct_definitions):
+        includes.add("#include <string>")
+    if any(re.search(r'\bstd::vector\b', struct) for struct in struct_definitions):
+        includes.add("#include <vector>")
+    if any(re.search(r'\bint64_t\b', struct) for struct in struct_definitions):
+        includes.add("#include <cstdint>")
+    return includes
+
+# Function to generate {name}Fwd.hpp content
 def generate_rspfwd_hpp(namespace, struct_definitions):
-    hpp_content = f"#pragma once\n#include <optional>\n#include <string>\n#include <vector>\n#include <cstdint>\n\n"
+    includes = determine_includes(struct_definitions)
+    hpp_content = "#pragma once\n"
+    hpp_content += "\n".join(includes) + "\n\n"
     hpp_content += f"namespace {namespace} {{\n"
 
     for struct in struct_definitions:
@@ -38,7 +53,7 @@ namespace {namespace} {{
 
     return hpp_content
 
-# Function to generate RspFwd.cpp content
+# Function to generate {name}Fwd.cpp content
 def generate_rspfwd_cpp(namespace, original_content, struct_names):
     # Remove struct definitions from the original content
     for struct_name in struct_names:
