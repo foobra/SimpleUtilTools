@@ -93,7 +93,7 @@ function gh () {
         echo "git status not clean, please commit first"
         return
     fi
-    
+
     src_branch=""
     dst_branch=""
     if [ -n "$1" ]; then
@@ -137,18 +137,27 @@ function gh () {
     origin_url=`git config remote.origin.url`
     git_ip=""
     git_path=""
+    git_port=""
     url=""
     if [[ $origin_url =~ "http" ]]
     then
-        git_ip=`sed -E 's|https?://([^/]+)/.*|\1|'`
-        git_path=`git config remote.origin.url | cut -d "/" -f4,5 | cut -d "." -f 1`
-        url='https://'$git_ip'/'$git_path'/merge_requests/new??merge_request[force_remove_source_branch]=0&merge_request[source_branch]='$src_branch'&merge_request[target_branch]='$dst_branch
+        # 处理 HTTPS URL
+        git_ip=`echo $origin_url | sed -E 's|https?://([^/:]+).*|\1|'`
+        git_path=`echo $origin_url | sed -E 's|https?://[^/]+/(.*)\.git.*|\1|'`
+        if [[ $origin_url =~ ":[0-9]+" ]]; then
+            git_port=`echo $origin_url | sed -E 's|https?://[^/:]+:([0-9]+)/.*|\1|'`
+        fi
     else
-        git_ip=`git config remote.origin.url | sed -E 's/ssh:\/\/git@([^:]+).*/\1/'`
-        git_path1=`git config remote.origin.url | sed 's/ssh\:\/\///g' |  rev2 | cut -d "/" -f2 | rev2 | cut -d ":" -f2`
-        git_path2=`git config remote.origin.url | sed 's/ssh\:\/\///g' | cut -d ":" -f2 | rev2 | cut -d "/" -f1 | rev2 | cut -d "." -f1`
-        url='https://'$git_ip'/'$git_path1'/'$git_path2'/merge_requests/new?merge_request[force_remove_source_branch]=0&merge_request[source_branch]='$src_branch'&merge_request[target_branch]='$dst_branch
+        # 处理 SSH URL
+        git_ip=`echo $origin_url | sed -E 's|ssh://[^@]+@([^:/]+).*|\1|'`
+        git_path=`echo $origin_url | sed -E 's|ssh://[^@]+@[^/]+/(.*)\.git|\1|'`
+        if [[ $origin_url =~ ":[0-9]+" ]]; then
+            git_port=`echo $origin_url | sed -E 's|ssh://[^@]+@[^:]+:([0-9]+)/.*|\1|'`
+        fi
     fi
+
+    # 构造最终 URL
+    url='https://'$git_ip'/'$git_path'/merge_requests/new?merge_request[force_remove_source_branch]=0&merge_request[source_branch]='$src_branch'&merge_request[target_branch]='$dst_branch
 
     if [[ -x "$(command -v xdg-open)" ]]
     then
