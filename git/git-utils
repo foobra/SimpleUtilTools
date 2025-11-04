@@ -1,5 +1,30 @@
 #!/bin/sh
 
+# Get git user name, prefer ASCII user.name, fallback to user.alias
+function get_git_user() {
+    local username=`git config --get user.name`
+    
+    # Check if username contains non-ASCII characters
+    if echo "$username" | LC_ALL=C grep -q '[^[:print:]]' || echo "$username" | LC_ALL=C grep -q '[^[:ascii:]]'; then
+        # username contains non-ASCII characters, try to use user.alias
+        local alias=`git config --get user.alias`
+        
+        if [ -z "$alias" ]; then
+            echo "警告: user.name '$username' 包含非ASCII字符，但未设置 user.alias"
+            echo "请执行以下命令设置 user.alias:"
+            echo "  git config --global user.alias your-alias-name"
+            echo "例如: git config --global user.alias gs"
+            return 1
+        else
+            echo "$alias"
+            return 0
+        fi
+    else
+        echo "$username"
+        return 0
+    fi
+}
+
 # git pull branch -> user_branch
 # $1 : git pull $1 branch ->current_branch
 function gl () {
@@ -208,7 +233,10 @@ function gnb () {
     done
 
 
-    user=`git config --get user.name`
+    user=`get_git_user`
+    if [ $? -ne 0 ]; then
+        return 1
+    fi
     user_branch="${user}_$default_branch"
 
     git remote prune origin
@@ -261,7 +289,10 @@ function gcd () {
         fi
     done
     head=`cat .git/HEAD`
-    user=`git config --get user.name`
+    user=`get_git_user`
+    if [ $? -ne 0 ]; then
+        return 1
+    fi
     if [[ $head = *_* ]]
     then
         echo "you have already switched to your own branch"
