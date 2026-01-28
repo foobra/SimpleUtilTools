@@ -3,12 +3,12 @@
 # Get git user name, prefer ASCII user.name, fallback to user.alias
 function get_git_user() {
     local username=`git config --get user.name`
-    
+
     # Check if username contains non-ASCII characters
     if echo "$username" | LC_ALL=C grep -q '[^[:print:]]' || echo "$username" | LC_ALL=C grep -q '[^[:ascii:]]'; then
         # username contains non-ASCII characters, try to use user.alias
         local alias=`git config --get user.alias`
-        
+
         if [ -z "$alias" ]; then
             echo "警告: user.name '$username' 包含非ASCII字符，但未设置 user.alias"
             echo "请执行以下命令设置 user.alias:"
@@ -204,7 +204,9 @@ function gh () {
 }
 
 function gnb () {
-    pkill Xcode || true
+    if command -v pkill >/dev/null 2>&1; then
+        pkill Xcode || true
+    fi
     default_branch=''
 
     if [ -z "$1" ]; then
