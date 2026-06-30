@@ -2,7 +2,15 @@
 
 # git pull branch -> user_branch
 # $1 : git pull $1 branch ->current_branch
+function unset_git_proxy () {
+    unset http_proxy
+    unset https_proxy
+    unset HTTP_PROXY
+    unset HTTPS_PROXY
+}
+
 function gl () {
+    unset_git_proxy
     now_pwd=`pwd`
     while [[ ! -d ".git" && ! -f ".git" ]]
     do
@@ -74,6 +82,7 @@ function rev2() {
 # git push user_branch and create merge request user_branch to branch
 # $1 : git push current branch and create merge request current branch to $1 branch
 function gh () {
+    unset_git_proxy
     now_pwd=`pwd`
     while [[ ! -d ".git" && ! -f ".git" ]]
     do
